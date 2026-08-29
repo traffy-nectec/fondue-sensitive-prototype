@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" viewBox="0 0 960 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d7c3b1"/>
+      <stop offset="1" stop-color="#8f755e"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="960" height="600" fill="url(#bg)"/>
+  <g filter="url(#blur)" opacity=".86">
+    <circle cx="260" cy="250" r="150" fill="#f0d8bf"/>
+    <rect x="430" y="80" width="390" height="380" rx="32" fill="#a7b3a1"/>
+    <rect x="120" y="410" width="650" height="90" rx="30" fill="#6f573f"/>
+  </g>
+  <rect x="120" y="235" width="720" height="110" rx="18" fill="#2c211b" opacity=".88"/>
+  <text x="480" y="285" text-anchor="middle" fill="#fff" font-family="sans-serif" font-size="30" font-weight="700">ภาพถูกปกปิดข้อมูล Sensitive</text>
+  <text x="480" y="324" text-anchor="middle" fill="#eadfd7" font-family="sans-serif" font-size="20">ปลดล็อกเพื่อดูภาพฉบับเต็ม</text>
+</svg>

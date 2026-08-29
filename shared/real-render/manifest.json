@@ -1,0 +1,21 @@
+{
+  "ticketId": "2026-62CT43",
+  "rendererVersion": "2026-08-25-v0.6.1",
+  "pages": [
+    "page-1.webp",
+    "page-2.webp",
+    "page-3.webp"
+  ],
+  "media": [
+    {
+      "id": "sensitive-10",
+      "label": "ภาพตอนแจ้ง",
+      "file": "media-sensitive-10.webp"
+    },
+    {
+      "id": "attachment-11176803",
+      "label": "ภาพ Timeline 1",
+      "file": "media-attachment-11176803.webp"
+    }
+  ]
+}

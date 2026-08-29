@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Prototype • LIFF ผู้แจ้ง</title>
+<!-- CSS ตัวนี้คือของจริง compile จาก sensitive.scss + Detail.scss ของ fondue-liff-my-case
+     markup ข้างล่างเขียนมือให้ตรงกับ Detail.jsx / SensitiveCaseView.jsx -->
+<link rel="stylesheet" href="./assets/liff-real.css">
+<style>
+  html, body { margin: 0; background: #f5f5f5; }
+  body { font-family: "IBM Plex Sans Thai", sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="detail-page-container">
+  <!-- แถบปุ่มด้านบน — fixed เหมือนของจริง เป็นที่มาของ .with-actions ที่เว้น padding-top ให้ -->
+  <div class="header-detail-container">
+    <div class="btn-container">
+      <div class="reopen-btn">เพิ่มรูป/ไฟล์</div>
+      <div class="talk-with-org-btn">คุยกับเจ้าหน้าที่</div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+</div>
+
+<script type="module" src="./liff.js"></script>
+</body>
+</html>

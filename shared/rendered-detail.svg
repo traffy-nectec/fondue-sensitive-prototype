@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1720" viewBox="0 0 800 1720">
+  <defs>
+    <pattern id="wm" width="360" height="180" patternUnits="userSpaceOnUse" patternTransform="rotate(-24)">
+      <text x="10" y="80" fill="#714727" opacity=".10" font-family="sans-serif" font-size="18">LINE Reporter • #2026-6U23NF</text>
+      <text x="10" y="108" fill="#714727" opacity=".10" font-family="sans-serif" font-size="15">20/08/69 14:30 • X7K9P2</text>
+    </pattern>
+    <linearGradient id="photo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dcb388"/>
+      <stop offset=".5" stop-color="#88a18d"/>
+      <stop offset="1" stop-color="#6e5a49"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1720" fill="#fffaf6"/>
+  <rect x="32" y="30" width="736" height="112" rx="18" fill="#714727"/>
+  <text x="64" y="78" fill="#fff" font-family="sans-serif" font-size="25" font-weight="700">รายละเอียดเรื่องแจ้ง</text>
+  <text x="64" y="116" fill="#f5e8dc" font-family="sans-serif" font-size="18">#2026-6U23NF • ข้อมูล Sensitive</text>
+
+  <rect x="32" y="166" width="736" height="420" rx="18" fill="#fff" stroke="#dec4ae" stroke-width="2"/>
+  <rect x="54" y="188" width="300" height="330" rx="14" fill="url(#photo)"/>
+  <circle cx="180" cy="315" r="70" fill="#f3d0ae" opacity=".8"/>
+  <rect x="245" y="260" width="80" height="190" rx="22" fill="#566f64" opacity=".9"/>
+  <text x="390" y="220" fill="#805739" font-family="sans-serif" font-size="18">ประเภท</text>
+  <text x="500" y="220" fill="#2f241e" font-family="sans-serif" font-size="19" font-weight="700">ทางเท้า</text>
+  <text x="390" y="266" fill="#805739" font-family="sans-serif" font-size="18">แจ้งเมื่อ</text>
+  <text x="500" y="266" fill="#2f241e" font-family="sans-serif" font-size="19">20 ส.ค. 69 14:20</text>
+  <text x="390" y="324" fill="#805739" font-family="sans-serif" font-size="18" font-weight="700">รายละเอียด</text>
+  <text x="390" y="366" fill="#2f241e" font-family="sans-serif" font-size="18">พบปัญหาบริเวณทางเท้า</text>
+  <text x="390" y="398" fill="#2f241e" font-family="sans-serif" font-size="18">มีข้อมูลบุคคลที่ต้องปกปิด</text>
+  <text x="390" y="430" fill="#2f241e" font-family="sans-serif" font-size="18">กรุณาตรวจสอบและดำเนินการ</text>
+  <rect x="54" y="536" width="692" height="28" rx="8" fill="#f1dfcf"/>
+
+  <text x="48" y="644" fill="#3a2b23" font-family="sans-serif" font-size="25" font-weight="700">Timeline การดำเนินงาน</text>
+  <line x1="78" y1="690" x2="78" y2="1500" stroke="#dcc8b7" stroke-width="5"/>
+
+  <circle cx="78" cy="720" r="15" fill="#f6b340" stroke="#d89015" stroke-width="4"/>
+  <rect x="115" y="684" width="620" height="210" rx="16" fill="#fff" stroke="#ead8c9" stroke-width="2"/>
+  <rect x="138" y="710" width="134" height="34" rx="17" fill="#ffedbd"/>
+  <text x="205" y="733" text-anchor="middle" fill="#835b00" font-family="sans-serif" font-size="16" font-weight="700">กำลังดำเนินการ</text>
+  <text x="138" y="785" fill="#6f625a" font-family="sans-serif" font-size="16">20 ส.ค. 69 14:30</text>
+  <text x="138" y="827" fill="#2f241e" font-family="sans-serif" font-size="19" font-weight="700">รับเรื่องและส่งให้หน่วยงานตรวจสอบแล้ว</text>
+  <text x="138" y="863" fill="#786a61" font-family="sans-serif" font-size="16">โดย Traffy @ ITS Lab2</text>
+
+  <circle cx="78" cy="970" r="15" fill="#f6b340" stroke="#d89015" stroke-width="4"/>
+  <rect x="115" y="934" width="620" height="330" rx="16" fill="#fff" stroke="#ead8c9" stroke-width="2"/>
+  <rect x="138" y="960" width="134" height="34" rx="17" fill="#ffedbd"/>
+  <text x="205" y="983" text-anchor="middle" fill="#835b00" font-family="sans-serif" font-size="16" font-weight="700">กำลังดำเนินการ</text>
+  <text x="138" y="1034" fill="#6f625a" font-family="sans-serif" font-size="16">20 ส.ค. 69 15:10</text>
+  <text x="138" y="1076" fill="#2f241e" font-family="sans-serif" font-size="19" font-weight="700">เจ้าหน้าที่ลงพื้นที่ตรวจสอบ</text>
+  <rect x="138" y="1104" width="220" height="128" rx="12" fill="url(#photo)"/>
+  <rect x="374" y="1104" width="220" height="128" rx="12" fill="#b28b67"/>
+
+  <circle cx="78" cy="1342" r="15" fill="#6fc78f" stroke="#41945f" stroke-width="4"/>
+  <rect x="115" y="1306" width="620" height="186" rx="16" fill="#fff" stroke="#ead8c9" stroke-width="2"/>
+  <rect x="138" y="1332" width="94" height="34" rx="17" fill="#dff5e5"/>
+  <text x="185" y="1355" text-anchor="middle" fill="#327748" font-family="sans-serif" font-size="16" font-weight="700">เสร็จสิ้น</text>
+  <text x="138" y="1406" fill="#6f625a" font-family="sans-serif" font-size="16">20 ส.ค. 69 17:45</text>
+  <text x="138" y="1448" fill="#2f241e" font-family="sans-serif" font-size="19" font-weight="700">ดำเนินการแก้ไขเรียบร้อยแล้ว</text>
+
+  <rect x="32" y="1540" width="736" height="118" rx="16" fill="#f4e8dd"/>
+  <text x="58" y="1586" fill="#714727" font-family="sans-serif" font-size="18" font-weight="700">LINE Reporter • #2026-6U23NF</text>
+  <text x="58" y="1623" fill="#714727" font-family="sans-serif" font-size="17">20/08/69 14:30 • X7K9P2</text>
+  <rect width="800" height="1720" fill="url(#wm)"/>
+</svg>

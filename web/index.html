@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Prototype • เว็บเจ้าหน้าที่ (citydata)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/sensitive-flow.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Anuphan", sans-serif;
+    background: #f2f4f7;
+    color: #2f241e;
+  }
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e3e7ec;
+    padding: 0 24px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .topbar__brand { font-weight: 700; font-size: 17px; }
+  .topbar__nav { display: flex; gap: 18px; font-size: 14px; color: #6b7684; }
+  .topbar__nav span[aria-current] { color: #714727; font-weight: 700; }
+  .topbar__right { margin-left: auto; font-size: 13px; color: #8b95a1; }
+
+
+  .layout {
+    max-width: 1180px;
+    margin: 18px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e3e7ec;
+    border-radius: 12px;
+  }
+  .card__head {
+    padding: 14px 18px;
+    border-bottom: 1px solid #eef1f4;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .card__body { padding: 18px; }
+
+  .list-item {
+    padding: 13px 18px;
+    border-bottom: 1px solid #eef1f4;
+    cursor: default;
+    font-size: 14px;
+  }
+  .list-item:last-child { border-bottom: none; }
+  .list-item.is-active { background: #faf4ee; box-shadow: inset 3px 0 0 #714727; }
+  .list-item__id { font-weight: 700; }
+  .list-item__meta { color: #8b95a1; font-size: 12px; padding-top: 3px; }
+  .lock-chip {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: #f4e8dd;
+    color: #714727;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 9px 14px;
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+  .meta-grid dt { color: #8b95a1; margin: 0; }
+  .meta-grid dd { margin: 0; font-weight: 600; }
+
+  .status-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #fff3d4;
+    color: #8a6300;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .slot {
+    border: 1px dashed #c8d0d9;
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: #8b95a1;
+    font-size: 13px;
+    line-height: 1.7;
+    background: #fbfcfd;
+  }
+  .slot strong { color: #5d6975; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar__brand">Traffy Fondue · เจ้าหน้าที่</div>
+  <nav class="topbar__nav">
+    <span>แผนที่</span><span aria-current="page">รายการแจ้ง</span><span>สถิติ</span><span>ตั้งค่า</span>
+  </nav>
+  <div class="topbar__right">โครงหน้าจอ — ไม่ต้อง login</div>
+</div>
+
+
+<div class="layout">
+  <aside class="card">
+    <div class="card__head">รายการแจ้ง</div>
+    <div class="list-item">
+      <div class="list-item__id">2026-K4M1PQ</div>
+      <div class="list-item__meta">ถนน · กำลังดำเนินการ</div>
+    </div>
+    <div class="list-item is-active">
+      <div class="list-item__id">2026-6U23NF</div>
+      <div class="list-item__meta">ทางเท้า · กำลังดำเนินการ</div>
+      <span class="lock-chip">ข้อมูลอ่อนไหว</span>
+    </div>
+    <div class="list-item">
+      <div class="list-item__id">2026-B8T7ZC</div>
+      <div class="list-item__meta">แสงสว่าง · เสร็จสิ้น</div>
+    </div>
+  </aside>
+
+  <main style="display:flex;flex-direction:column;gap:20px">
+    <section class="card">
+      <div class="card__head">รายละเอียดเรื่องแจ้ง · 2026-6U23NF</div>
+      <div class="card__body">
+        <dl class="meta-grid">
+          <dt>สถานะ</dt><dd><span class="status-pill">กำลังดำเนินการ</span></dd>
+          <dt>ประเภท</dt><dd>ทางเท้า</dd>
+          <dt>หน่วยงาน</dt><dd>Traffy @ ITS Lab2</dd>
+          <dt>แจ้งเมื่อ</dt><dd>20 ส.ค. 69 14:20</dd>
+          <dt>ที่อยู่</dt><dd>*****</dd>
+          <dt>รายละเอียด</dt><dd style="font-weight:400">ผู้แจ้งชื่อ ***** แจ้งเหตุบริเวณ ***** กรุณาติดต่อกลับที่หมายเลข *****</dd>
+        </dl>
+
+        <div class="sv-root" id="sensitive-slot"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">ส่วนที่รอ UI จริงจากทีม citydata-web</div>
+      <div class="card__body" style="display:flex;flex-direction:column;gap:12px">
+        <div class="slot"><strong>แถบเครื่องมือจัดการเรื่อง</strong> — ปรับสถานะ, ส่งต่อหน่วยงาน, มอบหมายเจ้าหน้าที่<br>เอามาจาก PostManagementNew.js ได้เลย</div>
+        <div class="slot"><strong>Timeline การดำเนินงาน</strong> — เมื่อเรื่องเป็น sensitive ส่วนนี้จะถูกแทนด้วยภาพที่ render มา ไม่ใช่ข้อความ</div>
+        <div class="slot"><strong>แชทกับผู้แจ้ง</strong> — ยังไม่อยู่ในเฟส 1 ของงาน sensitive</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+  import { mountSensitiveFlow } from "../shared/sensitive-flow.js";
+  mountSensitiveFlow(document.getElementById("sensitive-slot"), {
+    ticketId: "2026-6U23NF",
+  });
+</script>
+</body>
+</html>
