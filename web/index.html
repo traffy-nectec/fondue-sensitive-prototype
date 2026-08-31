@@ -1,176 +1,705 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Prototype • เว็บเจ้าหน้าที่ (citydata)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/sensitive-flow.css">
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: "Anuphan", sans-serif;
-    background: #f2f4f7;
-    color: #2f241e;
-  }
-  .topbar {
-    background: #fff;
-    border-bottom: 1px solid #e3e7ec;
-    padding: 0 24px;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-  }
-  .topbar__brand { font-weight: 700; font-size: 17px; }
-  .topbar__nav { display: flex; gap: 18px; font-size: 14px; color: #6b7684; }
-  .topbar__nav span[aria-current] { color: #714727; font-weight: 700; }
-  .topbar__right { margin-left: auto; font-size: 13px; color: #8b95a1; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traffy Fondue Management - Sensitive</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #f3f4f6;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .global-navbar {
+      background-color: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 8px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .global-navbar .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .global-navbar .logo-area img {
+      height: 24px;
+    }
+    .global-navbar .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      color: #4b5563;
+    }
+    .global-navbar .nav-links a {
+      text-decoration: none;
+      color: #4b5563;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .global-navbar .user-profile {
+      width: 32px;
+      height: 32px;
+      background-color: #f3f4f6;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+    }
 
+    .app-header {
+      background-color: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 24px;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .back-btn {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #4b5563;
+    }
+    .header-title h4 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #111827;
+    }
+    .header-title span {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
 
-  .layout {
-    max-width: 1180px;
-    margin: 18px auto;
-    padding: 0 24px;
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 20px;
-    align-items: start;
-  }
-  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    .main-container {
+      padding: 0 24px 24px 24px;
+      max-width: 1600px;
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 24px;
+    }
 
-  .card {
-    background: #fff;
-    border: 1px solid #e3e7ec;
-    border-radius: 12px;
-  }
-  .card__head {
-    padding: 14px 18px;
-    border-bottom: 1px solid #eef1f4;
-    font-weight: 700;
-    font-size: 15px;
-  }
-  .card__body { padding: 18px; }
+    .custom-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .card-header-custom {
+      background-color: #fff;
+      border-bottom: 1px solid #f3f4f6;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #1f2937;
+    }
 
-  .list-item {
-    padding: 13px 18px;
-    border-bottom: 1px solid #eef1f4;
-    cursor: default;
-    font-size: 14px;
-  }
-  .list-item:last-child { border-bottom: none; }
-  .list-item.is-active { background: #faf4ee; box-shadow: inset 3px 0 0 #714727; }
-  .list-item__id { font-weight: 700; }
-  .list-item__meta { color: #8b95a1; font-size: 12px; padding-top: 3px; }
-  .lock-chip {
-    display: inline-block;
-    margin-top: 6px;
-    padding: 2px 9px;
-    border-radius: 999px;
-    background: #f4e8dd;
-    color: #714727;
-    font-size: 11px;
-    font-weight: 700;
-  }
+    .compact-btn {
+      background: #fff;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .compact-btn:hover { background: #f8f9fa; }
+    
+    .status-badge {
+      background-color: #fef08a;
+      color: #854d0e;
+      border: 1px solid #fde047;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
 
-  .meta-grid {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 9px 14px;
-    font-size: 14px;
-    margin-bottom: 18px;
-  }
-  .meta-grid dt { color: #8b95a1; margin: 0; }
-  .meta-grid dd { margin: 0; font-weight: 600; }
+    .info-row {
+      display: flex;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .info-label {
+      width: 100px;
+      font-weight: 600;
+      color: #6b7280;
+      flex-shrink: 0;
+      font-size: 0.95rem;
+    }
+    .info-value {
+      flex: 1;
+      color: #111827;
+      font-size: 0.95rem;
+    }
 
-  .status-pill {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 999px;
-    background: #fff3d4;
-    color: #8a6300;
-    font-size: 12px;
-    font-weight: 700;
-  }
+    .locked-img-box {
+      min-height: 280px;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .locked-icon-circle {
+      background-color: #ffe4e6;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
 
-  .slot {
-    border: 1px dashed #c8d0d9;
-    border-radius: 10px;
-    padding: 14px 16px;
-    color: #8b95a1;
-    font-size: 13px;
-    line-height: 1.7;
-    background: #fbfcfd;
-  }
-  .slot strong { color: #5d6975; }
-</style>
+    .watermark-container {
+      position: relative;
+    }
+    .watermark-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 10;
+      pointer-events: none;
+      background-image: url('data:image/svg+xml;utf8,<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="45%" fill="rgba(220, 53, 69, 0.12)" font-size="36" font-weight="900" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(-30, 250, 200)">CONFIDENTIAL DATA</text><text x="50%" y="55%" fill="rgba(220, 53, 69, 0.12)" font-size="24" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(-30, 250, 200)">TRAFFY FONDUE SENSITIVE</text></svg>');
+      background-repeat: repeat;
+      background-position: top left;
+      display: none; 
+    }
+
+    .timeline-container {
+      padding: 20px;
+    }
+    .timeline-row {
+      display: flex;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .tl-center {
+      position: relative;
+      width: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tl-line {
+      position: absolute;
+      top: 15px;
+      bottom: -35px;
+      width: 2px;
+      background-color: #e5e7eb;
+      z-index: 0;
+    }
+    .tl-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid #F59E0B;
+      background-color: #ffeca0;
+      z-index: 1;
+      margin-top: 5px;
+    }
+    .tl-right {
+      flex: 1;
+      padding-left: 15px;
+    }
+    .tl-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .tl-time {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #111827;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .map-box {
+      background-color: #f3f4f6;
+      height: 150px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background-image: url('https://placehold.co/400x200?text=Map+Placeholder');
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .pin-input {
+      letter-spacing: 24px;
+      font-size: 1.5rem;
+      border-radius: 16px;
+      border: 2px solid #E2E8F0;
+      color: #1a1e29;
+      background-color: #F7FAFC;
+      padding-left: 24px;
+    }
+
+    .timeline-img {
+      transition: transform 0.2s;
+    }
+    .timeline-img:hover {
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="topbar__brand">Traffy Fondue · เจ้าหน้าที่</div>
-  <nav class="topbar__nav">
-    <span>แผนที่</span><span aria-current="page">รายการแจ้ง</span><span>สถิติ</span><span>ตั้งค่า</span>
-  </nav>
-  <div class="topbar__right">โครงหน้าจอ — ไม่ต้อง login</div>
-</div>
-
-
-<div class="layout">
-  <aside class="card">
-    <div class="card__head">รายการแจ้ง</div>
-    <div class="list-item">
-      <div class="list-item__id">2026-K4M1PQ</div>
-      <div class="list-item__meta">ถนน · กำลังดำเนินการ</div>
-    </div>
-    <div class="list-item is-active">
-      <div class="list-item__id">2026-6U23NF</div>
-      <div class="list-item__meta">ทางเท้า · กำลังดำเนินการ</div>
-      <span class="lock-chip">ข้อมูลอ่อนไหว</span>
-    </div>
-    <div class="list-item">
-      <div class="list-item__id">2026-B8T7ZC</div>
-      <div class="list-item__meta">แสงสว่าง · เสร็จสิ้น</div>
-    </div>
-  </aside>
-
-  <main style="display:flex;flex-direction:column;gap:20px">
-    <section class="card">
-      <div class="card__head">รายละเอียดเรื่องแจ้ง · 2026-6U23NF</div>
-      <div class="card__body">
-        <dl class="meta-grid">
-          <dt>สถานะ</dt><dd><span class="status-pill">กำลังดำเนินการ</span></dd>
-          <dt>ประเภท</dt><dd>ทางเท้า</dd>
-          <dt>หน่วยงาน</dt><dd>Traffy @ ITS Lab2</dd>
-          <dt>แจ้งเมื่อ</dt><dd>20 ส.ค. 69 14:20</dd>
-          <dt>ที่อยู่</dt><dd>*****</dd>
-          <dt>รายละเอียด</dt><dd style="font-weight:400">ผู้แจ้งชื่อ ***** แจ้งเหตุบริเวณ ***** กรุณาติดต่อกลับที่หมายเลข *****</dd>
-        </dl>
-
-        <div class="sv-root" id="sensitive-slot"></div>
+  <div class="global-navbar shadow-sm">
+    <div class="logo-area">
+      <span class="text-success fw-bold fs-5">traffy</span>
+      <div class="d-flex flex-column" style="line-height: 1.2;">
+        <span style="font-size: 0.7rem; color: #6b7280;">หน่วยงานปัจจุบัน</span>
+        <span class="fw-bold text-dark">Traffy @ ITS Lab2 <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></span>
       </div>
-    </section>
+    </div>
+    <div class="nav-links d-none d-lg-flex">
+      <a href="#"><i class="bi bi-info-circle"></i> ข่าวสาร</a>
+      <a href="#"><i class="bi bi-map"></i> แผนที่ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
+      <a href="#"><i class="bi bi-grid-3x3-gap"></i> เลือกหน่วยงาน</a>
+      <a href="#"><i class="bi bi-file-earmark-text"></i> รายการแจ้ง <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
+      <a href="#"><i class="bi bi-bar-chart"></i> สถิติ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
+      <a href="#"><i class="bi bi-gear"></i> ตั้งค่า <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
+      <a href="#"><i class="bi bi-lock"></i> เมนูลับ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
+      <a href="#"><i class="bi bi-download"></i> ดาวน์โหลด CSV</a>
+      <div class="user-profile"><i class="bi bi-person"></i></div>
+    </div>
+  </div>
 
-    <section class="card">
-      <div class="card__head">ส่วนที่รอ UI จริงจากทีม citydata-web</div>
-      <div class="card__body" style="display:flex;flex-direction:column;gap:12px">
-        <div class="slot"><strong>แถบเครื่องมือจัดการเรื่อง</strong> — ปรับสถานะ, ส่งต่อหน่วยงาน, มอบหมายเจ้าหน้าที่<br>เอามาจาก PostManagementNew.js ได้เลย</div>
-        <div class="slot"><strong>Timeline การดำเนินงาน</strong> — เมื่อเรื่องเป็น sensitive ส่วนนี้จะถูกแทนด้วยภาพที่ render มา ไม่ใช่ข้อความ</div>
-        <div class="slot"><strong>แชทกับผู้แจ้ง</strong> — ยังไม่อยู่ในเฟส 1 ของงาน sensitive</div>
+  <header class="app-header">
+    <div class="header-left">
+      <button class="back-btn"><i class="bi bi-arrow-left"></i></button>
+      <div class="header-title">
+        <h4>#2026-62CT43</h4>
+        <span>Traffy Fondue Management</span>
       </div>
-    </section>
-  </main>
-</div>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-warning rounded-pill btn-sm fw-bold px-3 d-flex align-items-center gap-1 shadow-sm">
+        <i class="bi bi-pencil-square"></i> แก้ไขข้อมูล
+      </button>
+      <button class="btn btn-light border rounded-pill btn-sm fw-bold px-3 d-flex align-items-center gap-1">
+        <i class="bi bi-printer"></i> พิมพ์หน้าเว็บ
+      </button>
+    </div>
+  </header>
 
-<script type="module">
-  import { mountSensitiveFlow } from "../shared/sensitive-flow.js";
-  mountSensitiveFlow(document.getElementById("sensitive-slot"), {
-    ticketId: "2026-6U23NF",
-  });
-</script>
+  <div class="main-container">
+    <div>
+      
+      <!-- Top Banner (ซ่อนไว้ก่อน จะโชว์เมื่อปลดล็อก) -->
+      <div id="sensitiveTopBanner" class="custom-card d-none">
+        <div style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 12px 20px;">
+          <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-2">
+            <div class="d-flex align-items-center flex-nowrap">
+              <i class="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
+              <span class="fw-bold text-primary">รายละเอียดข้อมูลปกปิด (Sensitive)</span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+              <button class="compact-btn">
+                <i class="bi bi-pencil-square" style="color: #0d6efd;"></i> ปรับประเภท
+              </button>
+              <button class="compact-btn">
+                <i class="bi bi-pencil-square" style="color: #0d6efd;"></i> ปรับสถานะ
+              </button>
+              <button class="compact-btn">
+                <i class="bi bi-chat-text-fill" style="color: #0dcaf0;"></i> คุยกับผู้แจ้ง
+              </button>
+              <button class="compact-btn">
+                <i class="bi bi-people-fill" style="color: #ffc107;"></i> คุยเฉพาะเจ้าหน้าที่
+              </button>
+              <div class="status-badge ms-2" style="background-color: #ffeca0; color: #333; border: 1px solid #F59E0B;">
+                <span>รอรับเรื่อง</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding: 12px 20px; background-color: #fff;">
+          <div class="d-flex justify-content-end">
+            <!-- ปุ่มดูภาพทั้งหมด แสดงเมื่อปลดล็อกและอยู่บน Banner -->
+            <button class="btn btn-dark btn-sm rounded-pill d-flex align-items-center gap-2 px-3 fw-bold shadow-sm" onclick="openGalleryModal(0)">
+              <i class="bi bi-images"></i> ดูภาพทั้งหมด
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Watermark Container -->
+      <div class="watermark-container" id="sensitiveWrapper">
+        <div class="watermark-overlay" id="watermarkOverlay"></div>
+        
+        <div id="sensitiveContent" style="transition: opacity 0.3s;">
+          
+          <div class="custom-card mb-4">
+            <div class="card-header-custom" id="detailHeader">
+              <div class="text-primary d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle-fill fs-5"></i> 
+                <span>รายละเอียดปัญหา</span>
+              </div>
+              <div class="status-badge text-warning bg-warning bg-opacity-10 border-warning">กำลังดำเนินการ</div>
+            </div>
+            
+            <div class="p-4 d-flex gap-4 flex-wrap align-items-stretch">
+              <!-- รูปภาพ (ซ้าย) -->
+              <div style="flex: 0 0 350px; max-width: 100%;">
+                <div id="lockedImageUI" class="locked-img-box">
+                  <div class="locked-icon-circle">
+                    <i class="bi bi-shield-lock-fill text-danger fs-3"></i>
+                  </div>
+                  <h6 class="fw-bold mb-1" style="color: #111827;">รูปภาพถูกบล็อกโดย AI</h6>
+                  <p class="text-muted small mb-4">อาจมีเนื้อหา Sensitive / PDPA</p>
+                  <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background-color: #3b82f6; border-color: #3b82f6; font-size: 0.9rem;" onclick="openUnlockModal()">
+                    <i class="bi bi-lock-fill me-1"></i> ปลดล็อกเพื่อดูรูปภาพ
+                  </button>
+                </div>
+                <!-- รูป Main หลังปลดล็อก -->
+                <div id="unlockedImageUI" class="d-none w-100 h-100">
+                  <img src="https://placehold.co/800x600/295ee6/ffffff?text=Main+Image" alt="Actual Image" class="img-fluid rounded-3 border w-100" style="object-fit: cover; height: 100%; cursor: pointer;" onclick="openGalleryModal(0)">
+                </div>
+              </div>
+
+              <div style="flex: 1; min-width: 280px; padding-top: 10px;">
+                <div class="info-row">
+                  <div class="info-label">ประเภท:</div>
+                  <div class="info-value">อื่นๆ</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">แจ้งเมื่อ:</div>
+                  <div class="info-value">อ. 11 ส.ค. 69 10:01</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">อัปเดต:</div>
+                  <div class="info-value">จ. 31 ส.ค. 69 16:07</div>
+                </div>
+                <div class="info-row align-items-center mt-3">
+                  <div class="info-label">รายละเอียด:</div>
+                  <div id="lockedDetailUI" class="info-value d-flex align-items-center gap-3 w-100">
+                    <span style="color: #9ca3af; letter-spacing: 2px;">xxxxxxxxxxxxx</span>
+                    <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm" style="background-color: #3b82f6; border-color: #3b82f6; font-size: 0.8rem;" onclick="openUnlockModal()">
+                      <i class="bi bi-lock-fill me-1"></i> ปลดล็อก
+                    </button>
+                  </div>
+                  <div id="unlockedDetailUI" class="info-value d-none w-100">
+                    <span style="color: #111827; white-space: pre-wrap;">ข้อความที่ถูกปิดบังไว้ถูกแสดงผลแล้ว</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline Card -->
+          <div class="custom-card mb-4">
+            <div class="card-header-custom" style="background-color: #fff; padding: 12px 20px;">
+              <div class="d-flex align-items-center gap-2" style="color: #4b5563; font-size: 1rem;">
+                <i class="bi bi-clock-history"></i> Timeline การดำเนินงาน
+              </div>
+            </div>
+            <div class="timeline-container">
+              
+              <!-- Timeline Event 1: รอรับเรื่อง -->
+              <div class="timeline-row">
+                <div class="tl-center"><div class="tl-line"></div><div class="tl-dot"></div></div>
+                <div class="tl-right">
+                  <div class="tl-badge" style="background: #ffeca0; border: 1px solid #F59E0B; color: #333;">รอรับเรื่อง</div>
+                  <div class="fw-bold" style="font-size: 0.85rem; color: #555;">โดย คุณทดสอบ ระบบ</div>
+                  <div class="tl-time">อ. 11 ส.ค. 69 10:05</div>
+                  
+                  <div class="mt-2 d-flex flex-wrap gap-2">
+                     <img src="https://placehold.co/600x400/4a3b32/ffffff?text=Timeline+Image" alt="timeline img 1" class="timeline-img rounded-3 border shadow-sm" style="max-width: 140px; cursor: pointer;" onclick="openGalleryModal(1)">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Timeline Event 2: แจ้งเรื่อง (แสดง Main Image ในไทม์ไลน์ด้วย) -->
+              <div class="timeline-row">
+                <div class="tl-center"><div class="tl-dot" style="background: #e6f4ff; border-color: #0d6efd;"></div></div>
+                <div class="tl-right">
+                  <div class="tl-badge" style="background: #e6f4ff; border: 1px solid #0d6efd; color: #0d6efd;">แจ้งเรื่อง</div>
+                  <div class="fw-bold" style="font-size: 0.85rem; color: #555;">โดย ผู้แจ้ง</div>
+                  <div class="tl-time">อ. 11 ส.ค. 69 10:01</div>
+                  
+                  <div class="mt-2 d-flex flex-wrap gap-2">
+                     <!-- นี่คือ Main Image ที่มาอยู่ในไทม์ไลน์ตามที่แจ้ง -->
+                     <img src="https://placehold.co/800x600/295ee6/ffffff?text=Main+Image" alt="main img in timeline" class="timeline-img rounded-3 border shadow-sm" style="max-width: 140px; cursor: pointer;" onclick="openGalleryModal(0)">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div> 
+
+      <!-- AI Analysis Card -->
+      <div class="custom-card shadow-sm" style="border: 1px solid #d8b4fe;">
+        <div class="card-header-custom" style="background-color: #f3e8ff; border-bottom: none; padding: 12px 20px;">
+          <div class="text-primary d-flex align-items-center gap-2" style="color: #6b21a8 !important;">
+            <i class="bi bi-stars"></i> <span style="font-weight: 700;">AI วิเคราะห์ปัญหา</span>
+          </div>
+        </div>
+        <div class="p-4" style="background-color: #faf5ff;">
+           <div style="font-size: 0.9rem; color: #4b5563; line-height: 1.6;">
+             1. วิเคราะห์ปัญหา...<br>
+             2. แนะนำวิธีแก้ไข...
+           </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Sidebar -->
+    <div>
+      <div class="custom-card p-4 shadow-sm">
+        <div class="sidebar-title"><i class="bi bi-diagram-3-fill text-secondary"></i> หน่วยงานที่เกี่ยวข้อง</div>
+        <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
+          <div class="fw-bold" style="font-size: 0.9rem; color: #111827;">Traffy @ ITS Lab2</div>
+          <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25" style="font-size: 0.7rem; font-weight: normal;">หน่วยงานของคุณ</span>
+        </div>
+        <div class="d-flex align-items-center gap-2 mb-3 ms-2">
+          <div style="width: 2px; height: 16px; background-color: #d1d5db; margin-left: 6px;"></div>
+          <span class="fw-bold" style="font-size: 0.9rem; color: #111827;">ทดสอบ toy (2)</span>
+        </div>
+        <div class="fw-bold mb-3 mt-4" style="font-size: 0.9rem; color: #111827;">Fondue Tutorial</div>
+        <div class="fw-bold mb-1" style="font-size: 0.9rem; color: #111827;">Traffy Test</div>
+      </div>
+
+      <div class="custom-card p-4 shadow-sm">
+        <div class="sidebar-title"><i class="bi bi-person-check-fill text-secondary"></i> ผู้รับผิดชอบ (ASSIGNEES)</div>
+        <div class="mt-3 p-3" style="background-color: #fffaf0; border: 1px solid #fed7aa; border-left: 4px solid #f97316; border-radius: 8px;">
+          <div style="font-size: 0.75rem; color: #c2410c; font-weight: 700; margin-bottom: 4px;">หน่วยงานของคุณ</div>
+          <div class="fw-bold mb-3" style="color: #9a3412; font-size: 0.9rem;">Traffy @ ITS Lab2</div>
+          <button class="btn btn-outline-warning w-100 btn-sm" style="border: 1px dashed #fdba74; color: #ea580c; font-weight: 600; background: transparent;">
+            <i class="bi bi-plus-circle me-1"></i> มอบหมายเจ้าหน้าที่เพิ่ม
+          </button>
+        </div>
+        <div class="text-center mt-3" style="font-size: 0.8rem; color: #9ca3af; cursor: pointer;">
+          หน่วยงานอื่นที่เกี่ยวข้อง (3 หน่วยงาน) <i class="bi bi-chevron-down"></i>
+        </div>
+      </div>
+
+      <div class="custom-card p-4 shadow-sm">
+        <div class="sidebar-title d-flex justify-content-between w-100 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <div style="width: 24px; height: 24px; background-color: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+              <i class="bi bi-geo-alt-fill text-danger" style="font-size: 0.85rem;"></i>
+            </div>
+            สถานที่เกิดเหตุ
+          </div>
+          <a href="#" class="text-primary" style="font-size: 0.8rem; font-weight: 600; text-decoration: none;">ดูที่อยู่แบบละเอียด</a>
+        </div>
+        <div class="fw-bold mb-1" style="font-size: 0.95rem; color: #111827; line-height: 1.4;">
+          แขวงวังทองหลาง เขตวังทองหลาง<br>กรุงเทพมหานคร
+        </div>
+        <div class="d-flex align-items-center gap-2 mb-3 mt-2">
+          <i class="bi bi-geo text-secondary"></i>
+          <span style="font-size: 0.85rem; color: #6b7280;">13.76883, 100.59676</span>
+          <button class="btn btn-light btn-sm border py-0 px-2 text-secondary" style="font-size: 0.75rem;"><i class="bi bi-copy"></i> คัดลอก</button>
+        </div>
+        <div class="map-box" style="height: 180px; border: 1px solid #e5e7eb;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal ปลดล็อกข้อมูล Sensitive -->
+  <div class="modal fade" id="unlockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-body p-4 text-center">
+          
+          <div class="d-flex justify-content-center mb-3">
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F4F7FE;">
+              <i class="bi bi-lock-fill" style="font-size: 1.75rem; color: #295EE6;"></i>
+            </div>
+          </div>
+          
+          <h4 class="fw-bolder mb-2" style="color: #2D3748; letter-spacing: -0.5px;">ปลดล็อกข้อมูล Sensitive</h4>
+          <p class="mb-4" style="color: #718096; font-size: 0.95rem;">กรุณาใส่รหัสผ่าน 6 หลักของคุณ (ทดสอบใช้: 123456)</p>
+
+          <div class="mb-4">
+            <input type="password" id="pinInput" maxlength="6" class="form-control form-control-lg text-center fw-bold shadow-none pin-input" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+          </div>
+
+          <div class="d-flex gap-3 justify-content-center">
+            <button type="button" class="btn btn-light fw-bold flex-fill" style="border-radius: 16px; padding: 12px 0; background-color: #EDF2F7; color: #4A5568; border: none;" data-bs-dismiss="modal">
+              ยกเลิก
+            </button>
+            <button type="button" class="btn btn-primary fw-bold flex-fill" style="border-radius: 16px; padding: 12px 0; background-color: #295EE6; border: none; box-shadow: 0px 6px 16px rgba(41, 94, 230, 0.25);" onclick="confirmUnlock()">
+              ตกลง
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal ภาพเต็ม (ข้อมูลปกปิด) สำหรับแสดง Gallery -->
+  <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header border-0" style="padding: 16px 20px;">
+          <h5 class="modal-title fw-bold" style="font-size: 1rem;">
+            <i class="bi bi-shield-lock-fill text-danger me-2"></i>ภาพเต็ม (ข้อมูลปกปิด)
+          </h5>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body p-0 position-relative d-flex flex-column" style="background-color: #000; min-height: 60vh;">
+          <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px;">
+            <img id="galleryImage" src="" alt="Gallery Image" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 12px; position: relative; z-index: 2;">
+
+            <div id="galleryPrevBtn" onclick="prevGalleryImage(event)" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+              <i class="bi bi-chevron-left fs-5"></i>
+            </div>
+            <div id="galleryNextBtn" onclick="nextGalleryImage(event)" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+              <i class="bi bi-chevron-right fs-5"></i>
+            </div>
+
+            <div id="galleryCounter" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0,0,0,0.6); padding: 4px 16px; border-radius: 20px; font-size: 0.85rem; z-index: 20; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
+              1 / 2
+            </div>
+          </div>
+
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; background-image: url('data:image/svg+xml;utf8,<svg width=\'500\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'><text x=\'50%\' y=\'45%\' fill=\'rgba(255, 255, 255, 0.18)\' font-size=\'36\' font-weight=\'900\' font-family=\'sans-serif\' text-anchor=\'middle\' dominant-baseline=\'middle\' transform=\'rotate(-30, 250, 200)\'>CONFIDENTIAL DATA</text><text x=\'50%\' y=\'55%\' fill=\'rgba(255, 255, 255, 0.18)\' font-size=\'24\' font-weight=\'bold\' font-family=\'sans-serif\' text-anchor=\'middle\' dominant-baseline=\'middle\' transform=\'rotate(-30, 250, 200)\'>TRAFFY FONDUE SENSITIVE</text></svg>'); background-repeat: repeat; background-position: center center;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    const unlockModalUI = new bootstrap.Modal(document.getElementById('unlockModal'));
+
+    function openUnlockModal() {
+      document.getElementById('pinInput').value = ''; 
+      unlockModalUI.show();
+    }
+
+    function confirmUnlock() {
+      const pin = document.getElementById('pinInput').value;
+      
+      if (pin === '123456') {
+        
+        document.getElementById('lockedImageUI').classList.add('d-none');
+        document.getElementById('unlockedImageUI').classList.remove('d-none');
+        
+        document.getElementById('lockedDetailUI').classList.remove('d-flex');
+        document.getElementById('lockedDetailUI').classList.add('d-none');
+        document.getElementById('unlockedDetailUI').classList.remove('d-none');
+
+        unlockModalUI.hide();
+        checkAndApplyWatermark();
+        
+      } else {
+        alert('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่ (รหัสทดสอบ: 123456)');
+      }
+    }
+
+    function checkAndApplyWatermark() {
+      document.getElementById('watermarkOverlay').style.display = 'block';
+      const contentArea = document.getElementById('sensitiveContent');
+      contentArea.style.pointerEvents = 'none';
+      contentArea.style.userSelect = 'none';
+      contentArea.style.opacity = '0.95';
+      
+      document.getElementById('detailHeader').classList.add('d-none');
+      document.getElementById('detailHeader').classList.remove('d-flex');
+      
+      document.getElementById('sensitiveTopBanner').classList.remove('d-none');
+    }
+
+    // รวมรูปภาพ Main (index 0) และภาพ Timeline (index 1) = รวม 2 รูป
+    const galleryImages = [
+      "https://placehold.co/800x600/295ee6/ffffff?text=Main+Image",
+      "https://placehold.co/600x400/4a3b32/ffffff?text=Timeline+Image"
+    ];
+    
+    let currentGalleryIndex = 0;
+    const galleryModalUI = new bootstrap.Modal(document.getElementById('galleryModal'));
+
+    function openGalleryModal(startIndex = 0) {
+      currentGalleryIndex = startIndex;
+      updateGalleryUI();
+      galleryModalUI.show();
+    }
+
+    function updateGalleryUI() {
+      document.getElementById('galleryImage').src = galleryImages[currentGalleryIndex];
+      document.getElementById('galleryCounter').innerText = `${currentGalleryIndex + 1} / ${galleryImages.length}`;
+
+      const prevBtn = document.getElementById('galleryPrevBtn');
+      const nextBtn = document.getElementById('galleryNextBtn');
+
+      prevBtn.style.opacity = currentGalleryIndex === 0 ? '0.3' : '1';
+      prevBtn.style.cursor = currentGalleryIndex === 0 ? 'not-allowed' : 'pointer';
+
+      nextBtn.style.opacity = currentGalleryIndex === galleryImages.length - 1 ? '0.3' : '1';
+      nextBtn.style.cursor = currentGalleryIndex === galleryImages.length - 1 ? 'not-allowed' : 'pointer';
+    }
+
+    function prevGalleryImage(e) {
+      if(e) e.stopPropagation();
+      if (currentGalleryIndex > 0) {
+        currentGalleryIndex--;
+        updateGalleryUI();
+      }
+    }
+
+    function nextGalleryImage(e) {
+      if(e) e.stopPropagation();
+      if (currentGalleryIndex < galleryImages.length - 1) {
+        currentGalleryIndex++;
+        updateGalleryUI();
+      }
+    }
+  </script>
 </body>
 </html>
