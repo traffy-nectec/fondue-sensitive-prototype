@@ -1,182 +1,684 @@
 <!doctype html>
 <html lang="th">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex, nofollow">
-<title>Prototype • แอปเจ้าหน้าที่ (FondueManager)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/sensitive-flow.css">
-<style>
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    min-height: 100vh;
-    font-family: "Noto Sans Thai", sans-serif;
-    background: transparent;
-    color: #2f241e;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 16px 30px;
-    gap: 16px;
-  }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Prototype • แอปเจ้าหน้าที่ (FondueManager)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- ใช้ FontAwesome สำหรับ Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../shared/sensitive-flow.css?v=2">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans Thai", sans-serif;
+      background: transparent;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 16px 30px;
+      gap: 16px;
+    }
 
-  /* กรอบมือถือ — เป็นแค่การจำลองหน้าตา ไม่ใช่ของจริงจาก React Native */
-  .phone {
-    width: 390px;
-    max-width: 100%;
-    background: #fff;
-    border-radius: 34px;
-    border: 9px solid #1d232b;
-    overflow: hidden;
-    box-shadow: 0 22px 50px rgba(20, 28, 38, 0.24);
-    display: flex;
-    flex-direction: column;
-    height: 800px;
-  }
+    /* กรอบมือถือ */
+    .phone {
+      width: 390px;
+      max-width: 100%;
+      background: #fff;
+      border-radius: 34px;
+      border: 9px solid #1d232b;
+      overflow: hidden;
+      box-shadow: 0 22px 50px rgba(20, 28, 38, 0.24);
+      display: flex;
+      flex-direction: column;
+      height: 800px;
+      position: relative;
+    }
 
-  .statusbar {
-    background: #1d232b;
-    color: #fff;
-    font-size: 12px;
-    padding: 7px 20px 11px;
-    display: flex;
-    justify-content: space-between;
-  }
+    .statusbar {
+      background: #714727;
+      color: #fff;
+      font-size: 12px;
+      padding: 12px 20px 4px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+    }
 
-  .appbar {
-    background: #714727;
-    color: #fff;
-    padding: 13px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .appbar__back { font-size: 20px; line-height: 1; }
-  .appbar__title { font-size: 16px; font-weight: 700; }
+    .appbar {
+      background: #714727;
+      color: #fff;
+      padding: 10px 16px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-  .screen {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    background: #f7f8fa;
-  }
+    .appbar__back {
+      position: absolute;
+      left: 16px;
+      font-size: 22px;
+      line-height: 1;
+      cursor: pointer;
+    }
 
-  .rn-card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 15px;
-    box-shadow: 0 1px 3px rgba(23, 32, 43, 0.08);
-  }
+    .appbar__title {
+      font-size: 17px;
+      font-weight: 700;
+    }
 
-  .rn-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 14px;
-    padding: 5px 0;
-  }
-  .rn-row__label { color: #8b95a1; }
-  .rn-row__value { font-weight: 600; text-align: right; }
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      background: #f5f6f8;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      /* ระยะห่างระหว่าง Block สีขาว */
+    }
 
-  .status-pill {
-    display: inline-block;
-    padding: 3px 12px;
-    border-radius: 999px;
-    background: #fff3d4;
-    color: #8a6300;
-    font-size: 12px;
-    font-weight: 700;
-  }
+    .screen::-webkit-scrollbar {
+      width: 0px;
+    }
 
-  .ticket-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .ticket-head__id { font-size: 17px; font-weight: 700; }
+    /* Block สีขาวแต่ละส่วน */
+    .white-block {
+      background: #fff;
+      padding: 16px;
+    }
 
-  .slot {
-    border: 1px dashed #c8d0d9;
-    border-radius: 12px;
-    padding: 13px 15px;
-    color: #8b95a1;
-    font-size: 12.5px;
-    line-height: 1.7;
-    background: #fbfcfd;
-  }
-  .slot strong { color: #5d6975; }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .tabbar {
-    display: flex;
-    border-top: 1px solid #e6e9ee;
-    background: #fff;
-    padding: 9px 0 15px;
-  }
-  .tabbar div {
-    flex: 1;
-    text-align: center;
-    font-size: 11px;
-    color: #98a2ae;
-  }
-  .tabbar div[aria-current] { color: #714727; font-weight: 700; }
-  .tabbar .dot {
-    width: 18px; height: 18px; margin: 0 auto 4px;
-    border-radius: 5px; background: currentColor; opacity: .85;
-  }
+    /* 1. Header Section (Profile, ID, Title, Status, Buttons) */
+    .detail-top-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
-  /* ในจอมือถือ ภาพประกอบวางเรียง 2 ช่องพอ */
-  .phone .sv-media { grid-template-columns: repeat(2, 1fr); }
-</style>
+    .profile-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 27px;
+      border: 1px solid #5d6975;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #5d6975;
+      flex-shrink: 0;
+    }
+
+    .ticket-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .ticket-id {
+      color: #8b95a1;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .ticket-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .ticket-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #8b95a1;
+      /* สีเทาตามรูป */
+      letter-spacing: 1px;
+    }
+
+    .btn-unlock-small {
+      background: #714727;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .status-row {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .status-row span:first-child {
+      color: #000;
+    }
+
+    .status-row span:last-child {
+      color: #c9711e;
+    }
+
+    .ticket-date-row {
+      font-size: 14px;
+      color: #000;
+    }
+
+    .action-pills-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .pill-btn {
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pill-talk-reporter {
+      background: #fff;
+      border: 1px solid #e8882f;
+      color: #c9711e;
+    }
+
+    .pill-talk-staff {
+      background: #e6f4ea;
+      border: 1px solid #a8d5ba;
+      color: #2e7d32;
+      position: relative;
+    }
+
+    .noti-dot {
+      position: absolute;
+      top: 0px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: #e8882f;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
+
+    .pill-manage-status {
+      background: #007aff;
+      color: #fff;
+      border: none;
+      flex: 1;
+      /* ยืดให้เต็มพื้นที่ที่เหลือถ้ามี */
+      text-align: center;
+    }
+
+    /* รูปภาพ Cover สำหรับ Normal Mode */
+    .ticket-cover {
+      width: 100%;
+      height: 200px;
+      background-color: #e0e0e0;
+      border-radius: 12px;
+      object-fit: cover;
+      background-image: url('https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400');
+      background-position: center;
+    }
+
+    /* 3. Location Section */
+    .location-address {
+      font-size: 14.5px;
+      color: #000;
+      margin-bottom: 12px;
+    }
+
+    .location-coords-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .location-coords {
+      font-size: 14.5px;
+      color: #000;
+    }
+
+    .location-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action-sm {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* 4. Responsible Orgs Section */
+    .orgs-card {
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+      padding: 4px 0;
+      background: #fcfcfc;
+    }
+
+    .org-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 2px solid #fff;
+      font-size: 14.5px;
+      color: #000;
+    }
+
+    .border-none {
+      border-bottom: none;
+    }
+
+    .org-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .traffy-logo {
+      background: #fff;
+      border: 1px solid #eee;
+      color: #00c853;
+    }
+
+    .t-logo {
+      background: #1a237e;
+    }
+
+    .other-logo {
+      background: #607d8b;
+      font-size: 8px;
+    }
+
+    /* 5. Responsible Persons Section */
+    .staff-card {
+      border: 1px solid #f0f0f0;
+      border-left: 3px solid #714727;
+      border-radius: 8px;
+      padding: 16px;
+      background: #fffaf7;
+      margin-bottom: 16px;
+    }
+
+    .staff-card-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .staff-card-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #714727;
+    }
+
+    .staff-card-subtitle {
+      font-size: 11px;
+      color: #8b95a1;
+      font-weight: 600;
+    }
+
+    .btn-dashed {
+      width: 100%;
+      border: 1px dashed #ccc;
+      background: #fff;
+      padding: 12px;
+      border-radius: 8px;
+      color: #714727;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .other-orgs-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .chevron-down {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8b95a1;
+      font-size: 12px;
+    }
+
+    /* 6. Timeline Section */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      padding-left: 8px;
+      margin-top: 16px;
+    }
+
+    .timeline-item {
+      display: flex;
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .timeline-dot-outline {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      border: 2px solid #fbbc05;
+      background: #fff;
+      z-index: 2;
+      margin-right: 12px;
+    }
+
+    .timeline-line {
+      position: absolute;
+      left: 11px;
+      top: 24px;
+      bottom: -16px;
+      width: 2px;
+      background: #e6e9ee;
+      z-index: 1;
+    }
+
+    .timeline-item:last-child .timeline-line {
+      display: none;
+    }
+
+    .timeline-content-no-bg {
+      flex: 1;
+      padding-bottom: 16px;
+    }
+
+    .timeline-header-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .status-pill-small {
+      background: #fce8b2;
+      color: #c9711e;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .timeline-author {
+      font-size: 12px;
+      color: #4a5568;
+      font-weight: 700;
+    }
+
+    .timeline-time-text {
+      font-size: 13px;
+      color: #000;
+      margin-bottom: 4px;
+    }
+
+    .timeline-desc-text {
+      font-size: 13.5px;
+      color: #000;
+      line-height: 1.5;
+    }
+
+    /* Tabbar */
+    .tabbar {
+      display: flex;
+      border-top: 1px solid #e6e9ee;
+      background: #fff;
+      padding: 10px 0 20px;
+    }
+
+    .tabbar div {
+      flex: 1;
+      text-align: center;
+      font-size: 11px;
+      color: #714727;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .tabbar div:not([aria-current]) {
+      color: #8b95a1;
+      font-weight: 500;
+    }
+
+    .tabbar i {
+      font-size: 20px;
+    }
+
+    /* จัดเรียงรูป Sensitive */
+    .phone .sv-media {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    /* Utility classes */
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </head>
+
 <body>
 
 
-<div class="phone">
-  <div class="statusbar"><span>9:41</span><span>▮▮▮ ▲ ▰</span></div>
-  <div class="appbar">
-    <span class="appbar__back">‹</span>
-    <span class="appbar__title">รายละเอียดเรื่องแจ้ง</span>
-  </div>
 
-  <div class="screen">
-    <div class="rn-card">
-      <div class="ticket-head">
-        <span class="ticket-head__id">2026-6U23NF</span>
-        <span class="status-pill">กำลังดำเนินการ</span>
-      </div>
-      <div class="rn-row"><span class="rn-row__label">ประเภท</span><span class="rn-row__value">ทางเท้า</span></div>
-      <div class="rn-row"><span class="rn-row__label">หน่วยงาน</span><span class="rn-row__value">Traffy @ ITS Lab2</span></div>
-      <div class="rn-row"><span class="rn-row__label">แจ้งเมื่อ</span><span class="rn-row__value">20 ส.ค. 69 14:20</span></div>
-      <div class="rn-row"><span class="rn-row__label">ที่อยู่</span><span class="rn-row__value">*****</span></div>
+  <div class="phone">
+    <div class="statusbar"><span>19:22</span><span style="letter-spacing: 2px;"><i class="fa-solid fa-signal"></i> <i
+          class="fa-solid fa-wifi"></i> <i class="fa-solid fa-battery-full"></i></span></div>
+    <div class="appbar">
+      <span class="appbar__back"><i class="fa-solid fa-angle-left"></i></span>
+      <span class="appbar__title">รายละเอียด</span>
     </div>
 
-    <div class="rn-card sv-root" id="sensitive-slot"></div>
+    <div class="screen" id="screen-content">
 
-    <div class="slot"><strong>ปุ่มปรับสถานะ / ส่งต่อ</strong> — จาก ProblemOnlyOne.js</div>
-    <div class="slot"><strong>Timeline</strong> — เรื่อง sensitive แสดงเป็นภาพที่ render มาแทนข้อความ</div>
+      <!-- 1. Top Section -->
+      <div class="white-block" id="block-top" style="padding-top: 20px;">
+        <div id="sensitive-top-header">
+          <div class="detail-top-row">
+            <div class="profile-circle">อื่นๆ</div>
+            <div class="ticket-info">
+              <div class="ticket-id">#2026-62CT43</div>
+              <div class="ticket-title-row">
+                <div class="ticket-title">XXXXX XX XXXX</div>
+                <!-- ปุ่มปลดล็อก (ถ้าเรื่อง sensitive) -->
+                <button class="btn-unlock-small" id="btn-top-unlock"><i class="fa-solid fa-unlock-keyhole"></i>
+                  ปลดล็อก</button>
+              </div>
+            </div>
+          </div>
+          <div class="status-row">
+            <span>สถานะ:</span> <span>กำลังดำเนินการ</span>
+          </div>
+          <div class="ticket-date-row">
+            แจ้งเมื่อ: 11-08-2026 10:01
+          </div>
+        </div>
+        <div class="action-pills-row">
+          <button class="pill-btn pill-talk-reporter">คุยกับผู้แจ้ง</button>
+          <button class="pill-btn pill-talk-staff">คุยเฉพาะเจ้าหน้าที่<span class="noti-dot"></span></button>
+          <button class="pill-btn pill-manage-status">จัดการสถานะ</button>
+        </div>
+      </div>
+
+      <!-- 2. รูปภาพปัญหา Section -->
+      <div class="white-block" id="block-sensitive">
+        <div class="section-title" id="sensitive-section-title">รูปภาพปัญหาที่ได้รับแจ้ง</div>
+
+        <!-- ============================================== -->
+        <!-- ส่วนของ SENSITIVE FLOW (แสดงเฉพาะโหมด Sensitive) -->
+        <!-- ============================================== -->
+        <div class="rn-card sv-root" id="sensitive-slot" style="padding: 0; box-shadow: none;"></div>
+
+        <!-- ============================================== -->
+        <!-- ส่วนรูปภาพปกติ (แสดงเฉพาะโหมด Normal)           -->
+        <!-- ============================================== -->
+        <div id="normal-image-slot" class="hidden">
+          <div class="ticket-cover"></div>
+        </div>
+      </div>
+
+      <!-- 3. Location Section -->
+      <div class="white-block">
+        <div class="section-title"><i class="fa-solid fa-location-dot" style="color: #FF3B30;"></i>
+          ตำแหน่งปัญหาที่ได้รับแจ้ง</div>
+        <!-- ที่อยู่จะถูกเซ็นเซอร์ถ้าเป็น Sensitive -->
+        <div class="location-address" id="val-address">*****</div>
+        <div class="location-coords-row">
+          <div class="location-coords">13.769, 100.597</div>
+          <div class="location-actions">
+            <button class="btn-action-sm"><i class="fa-regular fa-copy" style="font-size: 14px;"></i> คัดลอก</button>
+            <button class="btn-action-sm"><i class="fa-solid fa-diamond-turn-right" style="font-size: 14px;"></i>
+              นำทาง</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Responsible Orgs Section -->
+      <div class="white-block">
+        <div class="section-title">หน่วยงานที่รับผิดชอบปัญหานี้</div>
+        <div class="orgs-card">
+          <div class="org-row">
+            <div class="org-logo traffy-logo"><img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Apple_logo_grey.svg/100px-Apple_logo_grey.svg.png"
+                style="width: 20px; filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%); display: none;">traffy
+            </div> Traffy @ ITS Lab2
+          </div>
+          <div class="org-row">
+            <div class="org-logo t-logo">T*</div> Fondue Tutorial
+          </div>
+          <div class="org-row">
+            <div class="org-logo other-logo">PCB</div> ทดสอบ toy (2)
+          </div>
+          <div class="org-row border-none">
+            <div class="org-logo t-logo">T*</div> Traffy Test
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Responsible Persons Section -->
+      <div class="white-block">
+        <div class="section-title"><i class="fa-regular fa-user"></i> ผู้รับผิดชอบ</div>
+        <div class="staff-card">
+          <div class="staff-card-header">
+            <span class="staff-card-title">หน่วยงานของคุณ</span>
+            <span class="staff-card-subtitle">Traffy @ ITS Lab2</span>
+          </div>
+          <button class="btn-dashed"><i class="fa-solid fa-plus"></i> มอบหมายเจ้าหน้าที่เพิ่ม</button>
+        </div>
+        <div class="other-orgs-toggle">
+          <span>หน่วยงานอื่นที่เกี่ยวข้อง <span style="color: #8b95a1; font-weight: 500;">(3 หน่วยงาน)</span></span>
+          <div class="chevron-down"><i class="fa-solid fa-chevron-down"></i></div>
+        </div>
+      </div>
+
+      <!-- 6. Timeline Section -->
+      <div class="white-block" id="normal-timeline-section">
+        <div class="section-title" style="color: #6B6B6B;">ไทม์ไลน์การจัดการปัญหา</div>
+
+        <div class="timeline" id="normal-timeline">
+          <div style="background: #f9fafb; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 32px 16px; text-align: center; color: #64748b; font-size: 14px;">
+            <i class="fa-solid fa-lock" style="font-size: 24px; color: #94a3b8; margin-bottom: 12px; display: block;"></i>
+            <div style="font-weight: 600; color: #334155; margin-bottom: 6px; font-size: 15px;">ไทม์ไลน์ถูกปกปิดเพื่อความปลอดภัย</div>
+            ประวัติการดำเนินงานในส่วนนี้ถูกจำกัดสิทธิ์การเข้าถึงเนื่องจากเป็นข้อมูลละเอียดอ่อน (Sensitive Data)<br>
+            <span style="display: block; margin-top: 8px; font-size: 13px;">กรุณากดปุ่ม <b style="color: #334155;">"ปลดล็อก"</b> ด้านบนเพื่อเข้าถึงข้อมูล</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Tabbar ด้านล่าง -->
+    <div class="tabbar">
+      <div aria-current="page"><i class="fa-regular fa-file-lines"></i>รายการแจ้ง</div>
+      <div><i class="fa-regular fa-building"></i>หน่วยงาน</div>
+      <div><i class="fa-solid fa-user"></i>โปรไฟล์</div>
+    </div>
   </div>
 
-  <div class="tabbar">
-    <div><div class="dot"></div>หน้าแรก</div>
-    <div aria-current="page"><div class="dot"></div>รายการแจ้ง</div>
-    <div><div class="dot"></div>แจ้งเตือน</div>
-    <div><div class="dot"></div>โปรไฟล์</div>
-  </div>
-</div>
+  <script type="module">
+    import { mountSensitiveFlow } from "../shared/sensitive-flow.js?v=2";
 
-<script type="module">
-  import { mountSensitiveFlow } from "../shared/sensitive-flow.js";
-  mountSensitiveFlow(document.getElementById("sensitive-slot"), {
-    ticketId: "2026-6U23NF",
-  });
-</script>
+    // เรียกใช้งาน Sensitive Flow ใส่ลงใน #sensitive-slot
+    mountSensitiveFlow(document.getElementById("sensitive-slot"), {
+      ticketId: "2026-6U23NF",
+      onStateChange: (state) => {
+        const topHeader = document.getElementById("sensitive-top-header");
+        const normalTimeline = document.getElementById("normal-timeline-section");
+        const sectionTitle = document.getElementById("sensitive-section-title");
+        
+        if (state === 'unlocked') {
+          topHeader?.classList.add('hidden');
+          normalTimeline?.classList.add('hidden');
+          sectionTitle?.classList.add('hidden');
+        } else {
+          topHeader?.classList.remove('hidden');
+          normalTimeline?.classList.remove('hidden');
+          sectionTitle?.classList.remove('hidden');
+        }
+      }
+    });
+
+
+  </script>
 </body>
+
 </html>
