@@ -1,705 +1,622 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Traffy Fondue Management - Sensitive</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <style>
-    body {
-      background-color: #f3f4f6;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    
-    .global-navbar {
-      background-color: #fff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 8px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-    }
-    .global-navbar .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .global-navbar .logo-area img {
-      height: 24px;
-    }
-    .global-navbar .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      color: #4b5563;
-    }
-    .global-navbar .nav-links a {
-      text-decoration: none;
-      color: #4b5563;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .global-navbar .user-profile {
-      width: 32px;
-      height: 32px;
-      background-color: #f3f4f6;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #6b7280;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Prototype • เว็บเจ้าหน้าที่ (citydata)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="../shared/sensitive-flow.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Anuphan", sans-serif;
+    background: #f4f6f9;
+    color: #1e293b;
+  }
+  .topbar {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 28px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+  .topbar__brand { font-weight: 700; font-size: 18px; color: #714727; }
+  .topbar__nav { display: flex; gap: 20px; font-size: 14px; color: #64748b; font-weight: 500; }
+  .topbar__nav span[aria-current] { color: #714727; font-weight: 700; border-bottom: 2px solid #714727; padding-bottom: 4px; }
+  .topbar__right { margin-left: auto; font-size: 13px; color: #94a3b8; background: #f8fafc; padding: 6px 12px; border-radius: 20px; border: 1px solid #e2e8f0; }
 
-    .app-header {
-      background-color: #fff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px 24px;
-      border-radius: 12px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .back-btn {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: #4b5563;
-    }
-    .header-title h4 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #111827;
-    }
-    .header-title span {
-      font-size: 0.85rem;
-      color: #9ca3af;
-    }
+  .layout {
+    max-width: 1440px;
+    margin: 24px auto;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: 280px 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1200px) { 
+    .layout { grid-template-columns: 280px 1fr; }
+    .right-sidebar { grid-column: span 2; }
+  }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
 
-    .main-container {
-      padding: 0 24px 24px 24px;
-      max-width: 1600px;
-      display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 24px;
-    }
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+  }
+  .card__head {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+  }
+  .card__body { padding: 20px; }
 
-    .custom-card {
-      background: #fff;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      margin-bottom: 24px;
-      overflow: hidden;
-    }
-    .card-header-custom {
-      background-color: #fff;
-      border-bottom: 1px solid #f3f4f6;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: #1f2937;
-    }
+  .list-item {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .list-item.is-active { background: #fcf6f0; box-shadow: inset 4px 0 0 #714727; }
+  .list-item__id { font-weight: 700; color: #1e293b; }
+  .list-item__meta { color: #64748b; font-size: 12px; margin-top: 2px; }
+  
+  .lock-chip {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid #fee2e2;
+  }
 
-    .compact-btn {
-      background: #fff;
-      border: 1px solid #dee2e6;
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #374151;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-    .compact-btn:hover { background: #f8f9fa; }
-    
-    .status-badge {
-      background-color: #fef08a;
-      color: #854d0e;
-      border: 1px solid #fde047;
-      padding: 4px 16px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
+  .status-pill {
+    background-color: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-block;
+    white-space: nowrap;
+  }
 
-    .info-row {
-      display: flex;
-      margin-bottom: 14px;
-      align-items: flex-start;
-    }
-    .info-label {
-      width: 100px;
-      font-weight: 600;
-      color: #6b7280;
-      flex-shrink: 0;
-      font-size: 0.95rem;
-    }
-    .info-value {
-      flex: 1;
-      color: #111827;
-      font-size: 0.95rem;
-    }
+  .info-row {
+    display: flex;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .info-label {
+    width: 110px;
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+  .info-value {
+    flex: 1;
+    color: #1e293b;
+    font-size: 0.9rem;
+  }
 
-    .locked-img-box {
-      min-height: 280px;
-      background-color: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px;
-    }
-    .locked-icon-circle {
-      background-color: #ffe4e6;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 15px;
-    }
+  /* ปุ่มธีม Fondue สีน้ำตาล */
+  .btn-fondue {
+    background-color: #714727 !important;
+    border-color: #714727 !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    font-weight: 600;
+  }
+  .btn-fondue:hover {
+    background-color: #5c391f !important;
+    border-color: #5c391f !important;
+  }
 
-    .watermark-container {
-      position: relative;
-    }
-    .watermark-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      z-index: 10;
-      pointer-events: none;
-      background-image: url('data:image/svg+xml;utf8,<svg width="500" height="400" xmlns="http://www.w3.org/2000/svg"><text x="50%" y="45%" fill="rgba(220, 53, 69, 0.12)" font-size="36" font-weight="900" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(-30, 250, 200)">CONFIDENTIAL DATA</text><text x="50%" y="55%" fill="rgba(220, 53, 69, 0.12)" font-size="24" font-weight="bold" font-family="sans-serif" text-anchor="middle" dominant-baseline="middle" transform="rotate(-30, 250, 200)">TRAFFY FONDUE SENSITIVE</text></svg>');
-      background-repeat: repeat;
-      background-position: top left;
-      display: none; 
-    }
+  .action-btn { 
+    background: #fff; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 8px; 
+    padding: 6px 12px; 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+    color: #334151; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 6px; 
+    cursor: pointer; 
+    transition: all 0.2s;
+    flex: 1;
+    justify-content: center;
+    white-space: nowrap;
+  }
+  .action-btn:hover { background: #f8fafc; border-color: #cbd5e1; }
 
-    .timeline-container {
-      padding: 20px;
-    }
-    .timeline-row {
-      display: flex;
-      margin-bottom: 20px;
-      position: relative;
-    }
-    .tl-center {
-      position: relative;
-      width: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .tl-line {
-      position: absolute;
-      top: 15px;
-      bottom: -35px;
-      width: 2px;
-      background-color: #e5e7eb;
-      z-index: 0;
-    }
-    .tl-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid #F59E0B;
-      background-color: #ffeca0;
-      z-index: 1;
-      margin-top: 5px;
-    }
-    .tl-right {
-      flex: 1;
-      padding-left: 15px;
-    }
-    .tl-badge {
-      display: inline-block;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .tl-time {
-      font-size: 0.8rem;
-      color: #6b7280;
-      margin-bottom: 6px;
-    }
+  /* Timeline */
+  .timeline-container { padding: 8px 4px; }
+  .timeline-row { display: flex; margin-bottom: 18px; position: relative; }
+  .tl-center { position: relative; width: 28px; display: flex; flex-direction: column; align-items: center; }
+  .tl-line { position: absolute; top: 14px; bottom: -24px; width: 2px; background-color: #e2e8f0; z-index: 0; }
+  .tl-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #f59e0b; background-color: #fef3c7; z-index: 1; margin-top: 4px; }
+  .tl-right { flex: 1; padding-left: 12px; }
+  .tl-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 4px; }
+  .tl-time { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
 
-    .sidebar-title {
-      font-weight: 700;
-      font-size: 1rem;
-      color: #111827;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .map-box {
-      background-color: #f3f4f6;
-      height: 150px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      background-image: url('https://placehold.co/400x200?text=Map+Placeholder');
-      background-size: cover;
-      background-position: center;
-    }
-    
-    .pin-input {
-      letter-spacing: 24px;
-      font-size: 1.5rem;
-      border-radius: 16px;
-      border: 2px solid #E2E8F0;
-      color: #1a1e29;
-      background-color: #F7FAFC;
-      padding-left: 24px;
-    }
-
-    .timeline-img {
-      transition: transform 0.2s;
-    }
-    .timeline-img:hover {
-      transform: scale(1.05);
-    }
-  </style>
+  .sidebar-title { font-weight: 700; font-size: 0.95rem; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .map-box { background-color: #f1f5f9; height: 160px; border-radius: 12px; margin-top: 12px; background-image: url('https://placehold.co/400x200?text=Map+Placeholder'); background-size: cover; background-position: center; border: 1px solid #e2e8f0; }
+</style>
 </head>
 <body>
 
-  <div class="global-navbar shadow-sm">
-    <div class="logo-area">
-      <span class="text-success fw-bold fs-5">traffy</span>
-      <div class="d-flex flex-column" style="line-height: 1.2;">
-        <span style="font-size: 0.7rem; color: #6b7280;">หน่วยงานปัจจุบัน</span>
-        <span class="fw-bold text-dark">Traffy @ ITS Lab2 <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></span>
-      </div>
-    </div>
-    <div class="nav-links d-none d-lg-flex">
-      <a href="#"><i class="bi bi-info-circle"></i> ข่าวสาร</a>
-      <a href="#"><i class="bi bi-map"></i> แผนที่ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
-      <a href="#"><i class="bi bi-grid-3x3-gap"></i> เลือกหน่วยงาน</a>
-      <a href="#"><i class="bi bi-file-earmark-text"></i> รายการแจ้ง <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
-      <a href="#"><i class="bi bi-bar-chart"></i> สถิติ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
-      <a href="#"><i class="bi bi-gear"></i> ตั้งค่า <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
-      <a href="#"><i class="bi bi-lock"></i> เมนูลับ <i class="bi bi-chevron-down ms-1" style="font-size: 0.7rem;"></i></a>
-      <a href="#"><i class="bi bi-download"></i> ดาวน์โหลด CSV</a>
-      <div class="user-profile"><i class="bi bi-person"></i></div>
-    </div>
-  </div>
+<div class="topbar">
+  <div class="topbar__brand"><i class="bi bi-shield-check me-2"></i>Traffy Fondue · เจ้าหน้าที่</div>
+  <nav class="topbar__nav">
+    <span>แผนที่</span><span aria-current="page">รายการแจ้ง</span><span>สถิติ</span><span>ตั้งค่า</span>
+  </nav>
+  <div class="topbar__right">โหมดจำลองหน้าจอเจ้าหน้าที่</div>
+</div>
 
-  <header class="app-header">
-    <div class="header-left">
-      <button class="back-btn"><i class="bi bi-arrow-left"></i></button>
-      <div class="header-title">
-        <h4>#2026-62CT43</h4>
-        <span>Traffy Fondue Management</span>
-      </div>
+<div class="layout">
+  
+  <aside class="card shadow-sm">
+    <div class="card__head">
+      <span>รายการแจ้งเรื่อง</span>
+      <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1" style="font-size: 0.75rem;">3 รายการ</span>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-warning rounded-pill btn-sm fw-bold px-3 d-flex align-items-center gap-1 shadow-sm">
-        <i class="bi bi-pencil-square"></i> แก้ไขข้อมูล
-      </button>
-      <button class="btn btn-light border rounded-pill btn-sm fw-bold px-3 d-flex align-items-center gap-1">
-        <i class="bi bi-printer"></i> พิมพ์หน้าเว็บ
-      </button>
+    <div class="list-item">
+      <div class="list-item__id">2026-K4M1PQ</div>
+      <div class="list-item__meta">ถนน · กำลังดำเนินการ</div>
     </div>
-  </header>
+    <div class="list-item is-active">
+      <div class="list-item__id">2026-6U23NF</div>
+      <div class="list-item__meta">ทางเท้า · กำลังดำเนินการ</div>
+      <div><span class="lock-chip"><i class="bi bi-lock-fill me-1"></i> ข้อมูลอ่อนไหว</span></div>
+    </div>
+    <div class="list-item">
+      <div class="list-item__id">2026-B8T7ZC</div>
+      <div class="list-item__meta">แสงสว่าง · เสร็จสิ้น</div>
+    </div>
+  </aside>
 
-  <div class="main-container">
-    <div>
+  <main style="display:flex;flex-direction:column;gap:0px; min-width: 0;">
+
+    <section class="card shadow-sm" id="mainProblemCard">
+      <div class="card__head">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-file-text-fill text-primary"></i>
+          <span>รายละเอียดปัญหา</span>
+        </div>
+        <div class="status-pill">กำลังดำเนินการ</div>
+      </div>
       
-      <!-- Top Banner (ซ่อนไว้ก่อน จะโชว์เมื่อปลดล็อก) -->
-      <div id="sensitiveTopBanner" class="custom-card d-none">
-        <div style="background-color: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 12px 20px;">
-          <div class="d-flex align-items-center justify-content-between w-100 flex-wrap gap-2">
-            <div class="d-flex align-items-center flex-nowrap">
-              <i class="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
-              <span class="fw-bold text-primary">รายละเอียดข้อมูลปกปิด (Sensitive)</span>
-            </div>
-            
-            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-              <button class="compact-btn">
-                <i class="bi bi-pencil-square" style="color: #0d6efd;"></i> ปรับประเภท
-              </button>
-              <button class="compact-btn">
-                <i class="bi bi-pencil-square" style="color: #0d6efd;"></i> ปรับสถานะ
-              </button>
-              <button class="compact-btn">
-                <i class="bi bi-chat-text-fill" style="color: #0dcaf0;"></i> คุยกับผู้แจ้ง
-              </button>
-              <button class="compact-btn">
-                <i class="bi bi-people-fill" style="color: #ffc107;"></i> คุยเฉพาะเจ้าหน้าที่
-              </button>
-              <div class="status-badge ms-2" style="background-color: #ffeca0; color: #333; border: 1px solid #F59E0B;">
-                <span>รอรับเรื่อง</span>
-              </div>
-            </div>
+      <!-- พื้นที่แสดงผล Sensitive Flow (ก่อน/หลังปลดล็อก) -->
+      <div class="card__body" id="sensitive-root">
+        <!-- โหลดด้วย Script ด้านล่าง -->
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="card shadow-sm" id="timelineCard">
+      <div class="card__head">
+        <div class="d-flex align-items-center gap-2 text-secondary">
+          <i class="bi bi-clock-history"></i> <span>Timeline การดำเนินงาน</span>
+        </div>
+      </div>
+      <div class="card__body timeline-container">
+        <div class="timeline-row">
+          <div class="tl-center"><div class="tl-line"></div><div class="tl-dot"></div></div>
+          <div class="tl-right">
+            <div class="tl-badge bg-warning bg-opacity-10 text-dark border border-warning">รอรับเรื่อง</div>
+            <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย คุณทดสอบ ระบบ</div>
+            <div class="tl-time">อ. 11 ส.ค. 69 10:05</div>
           </div>
         </div>
-        <div style="padding: 12px 20px; background-color: #fff;">
-          <div class="d-flex justify-content-end">
-            <!-- ปุ่มดูภาพทั้งหมด แสดงเมื่อปลดล็อกและอยู่บน Banner -->
-            <button class="btn btn-dark btn-sm rounded-pill d-flex align-items-center gap-2 px-3 fw-bold shadow-sm" onclick="openGalleryModal(0)">
-              <i class="bi bi-images"></i> ดูภาพทั้งหมด
+        <div class="timeline-row">
+          <div class="tl-center"><div class="tl-dot" style="background: #e0f2fe; border-color: #0284c7;"></div></div>
+          <div class="tl-right">
+            <div class="tl-badge bg-info bg-opacity-10 text-info border border-info">แจ้งเรื่อง</div>
+            <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย ผู้แจ้ง</div>
+            <div class="tl-time">อ. 11 ส.ค. 69 10:01</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI วิเคราะห์ปัญหา -->
+    <section class="card shadow-sm" style="border: 1px solid #e9d5ff;">
+      <div class="card__head" style="background-color: #f3e8ff; border-bottom: 1px solid #e9d5ff; color: #7e22ce;">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-stars"></i> <span>AI วิเคราะห์ปัญหา</span>
+        </div>
+      </div>
+      <div class="card__body" style="background-color: #faf5ff;">
+        <div style="font-size: 0.9rem; color: #581c87; line-height: 1.6;">
+          <strong>1. วิเคราะห์ปัญหา:</strong> พบความเสียหายบริเวณทางเท้าสัญจร มีความเสี่ยงต่อการเกิดอุบัติเหตุ<br>
+          <strong>2. แนะนำวิธีแก้ไข:</strong> ประสานหน่วยงานโยธาเข้าพื้นที่เพื่อซ่อมแซมและปรับปรุงผิวทางเท้าเร่งด่วน
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <aside class="right-sidebar d-flex flex-column gap-3">
+    <div class="card p-4 shadow-sm mb-0">
+      <div class="sidebar-title"><i class="bi bi-diagram-3 text-primary"></i> หน่วยงานที่เกี่ยวข้อง</div>
+      <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
+        <div class="fw-bold" style="font-size: 0.9rem; color: #1e293b;">Traffy @ ITS Lab2</div>
+        <span class="badge bg-light text-muted border" style="font-size: 0.7rem;">หน่วยงานของคุณ</span>
+      </div>
+      <div class="d-flex align-items-center gap-2 mb-2 ms-2 text-muted" style="font-size: 0.85rem;">
+        <div style="width: 2px; height: 16px; background-color: #cbd5e1; margin-left: 4px;"></div>
+        <span>ทดสอบ toy (2)</span>
+      </div>
+      <div class="fw-bold mb-2 mt-3" style="font-size: 0.9rem; color: #1e293b;">Fondue Tutorial</div>
+      <div class="fw-bold mb-1" style="font-size: 0.9rem; color: #1e293b;">Traffy Test</div>
+    </div>
+
+    <div class="card p-4 shadow-sm mb-0">
+      <div class="sidebar-title"><i class="bi bi-person-badge text-primary"></i> ผู้รับผิดชอบ (ASSIGNEES)</div>
+      <div class="mt-2 p-3 bg-light rounded-3 border border-warning-subtle" style="background-color: #fffbeb !important;">
+        <div style="font-size: 0.75rem; color: #b45309; font-weight: 700; margin-bottom: 4px;">หน่วยงานหลัก</div>
+        <div class="fw-bold mb-3 text-dark" style="font-size: 0.9rem;">Traffy @ ITS Lab2</div>
+        <button class="action-btn w-100 justify-content-center text-warning-emphasis bg-white border-warning-subtle shadow-sm">
+          <i class="bi bi-plus-circle"></i> มอบหมายเจ้าหน้าที่เพิ่ม
+        </button>
+      </div>
+    </div>
+
+    <div class="card p-4 shadow-sm mb-0">
+      <div class="sidebar-title d-flex justify-content-between w-100 mb-2">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-geo-alt text-danger"></i> สถานที่เกิดเหตุ
+        </div>
+        <a href="#" class="text-decoration-none" style="font-size: 0.8rem; font-weight: 600;">ดูแผนที่ใหญ่</a>
+      </div>
+      <div class="fw-bold mb-2" style="font-size: 0.95rem; color: #1e293b; line-height: 1.4;" id="addressSidebarText">
+        แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพมหานคร
+      </div>
+      <div class="d-flex align-items-center gap-2 text-muted" style="font-size: 0.8rem;">
+        <i class="bi bi-pin-map"></i>
+        <span>13.76883, 100.59676</span>
+      </div>
+      <div class="map-box"></div>
+    </div>
+  </aside>
+</div>
+
+<script type="module">
+  import {
+    createSensitivePin,
+    getRenderedContent,
+    lockedCase,
+    resetSensitivePin,
+    unlockSensitiveCase,
+  } from "../shared/sensitive-mock.js";
+
+  const root = document.getElementById("sensitive-root");
+
+  const LOCK_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: -2px; margin-right: 4px;"><path d="M7 10V7a5 5 0 0 1 9.6-1.95M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  
+  const PIN_ICON = `
+    <div style="width: 56px; height: 56px; background-color: #eff6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" class="text-primary">
+        <path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  `;
+
+  const MODE_CONTENT = {
+    setup: { 
+      title: "ตั้งรหัสผ่านความปลอดภัย", 
+      description: "กรุณาตั้งรหัสผ่าน 6 หลักสำหรับการเข้าดูข้อมูล Sensitive", 
+      submitLabel: "บันทึกและปลดล็อก" 
+    },
+    reset: { 
+      title: "ตั้งรหัสผ่านใหม่", 
+      description: "กรุณากรอกรหัสผ่านใหม่ 6 หลักที่ต้องการใช้งาน", 
+      submitLabel: "บันทึกรหัสผ่านใหม่" 
+    },
+    unlock: { 
+      title: "ปลดล็อกข้อมูล Sensitive", 
+      description: "กรุณากรอกรหัสผ่าน 6 หลักเพื่อดูรายละเอียด", 
+      submitLabel: "ปลดล็อก" 
+    },
+  };
+
+  let viewToken = "";
+
+  function lockedMarkup() {
+    return `
+      <div class="row g-4 align-items-stretch">
+        <div class="col-lg-5">
+          <div class="bg-light border rounded-4 d-flex flex-column align-items-center justify-content-center text-center p-4 h-100" style="min-height: 320px;">
+            <div style="width:64px; height:64px; background-color:#fee2e2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
+              <i class="bi bi-shield-lock-fill fs-2 text-danger"></i>
+            </div>
+            <h6 class="fw-bold mb-1 text-dark" style="font-size: 1.05rem;">รูปภาพถูกบล็อกโดย AI</h6>
+            <p class="text-muted small mb-4">อาจมีเนื้อหา Sensitive / PDPA</p>
+            <button type="button" class="btn btn-fondue px-4 py-2 shadow-sm" id="unlock-button">
+              ${LOCK_ICON} ปลดล็อกเพื่อดูรูปภาพ
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Watermark Container -->
-      <div class="watermark-container" id="sensitiveWrapper">
-        <div class="watermark-overlay" id="watermarkOverlay"></div>
-        
-        <div id="sensitiveContent" style="transition: opacity 0.3s;">
+        <div class="col-lg-7 d-flex flex-column justify-content-between">
+          <div>
+            <div class="info-row">
+              <div class="info-label">ประเภท:</div>
+              <div class="info-value d-flex align-items-center gap-2">
+                <span>${lockedCase.category}</span>
+                <button class="btn btn-light btn-sm border py-0 px-2 text-secondary rounded-pill" style="font-size: 0.75rem;"><i class="bi bi-pencil-square"></i> เปลี่ยน</button>
+              </div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">แจ้งเมื่อ:</div>
+              <div class="info-value">${lockedCase.reportedAt}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">อัปเดต:</div>
+              <div class="info-value">${lockedCase.updatedAt}</div>
+            </div>
+            <div class="info-row align-items-center">
+              <div class="info-label">รายละเอียด:</div>
+              <div class="info-value d-flex align-items-center justify-content-between w-100">
+                <span class="text-muted" style="letter-spacing: 2px;">xxxxxxxxxxxxx</span>
+                <button type="button" class="btn btn-fondue btn-sm px-3 shadow-sm" id="unlock-button-inline">
+                  ${LOCK_ICON} ปลดล็อก
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- เมนูจัดการด่วน 3 ปุ่มในบรรทัดเดียวกัน -->
+          <div class="mt-4 pt-3 border-top">
+            <div style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 12px;">
+              <i class="bi bi-grid-fill me-1"></i> เมนูจัดการด่วน
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-nowrap">
+              <button class="action-btn"><i class="bi bi-pencil-square text-warning"></i> ปรับสถานะ</button>
+              <button class="action-btn"><i class="bi bi-chat-text-fill text-info"></i> คุยกับผู้แจ้ง</button>
+              <button class="action-btn"><i class="bi bi-people-fill text-info"></i> คุยเฉพาะ จนท.</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderLocked() {
+    root.innerHTML = lockedMarkup();
+    document.getElementById("unlock-button").addEventListener("click", openUnlockFlow);
+    document.getElementById("unlock-button-inline").addEventListener("click", openUnlockFlow);
+  }
+
+  // บังคับเปิดหน้าต่างตั้งรหัสผ่าน (setup) ทันทีเมื่อกดปุ่มปลดล็อก
+  async function openUnlockFlow() {
+    openPinModal("setup");
+  }
+
+  function pinFieldMarkup(id, label) {
+    return `
+      <label class="form-label fw-bold small text-start d-block text-secondary mb-1" for="${id}">${label}</label>
+      <input id="${id}" class="form-control text-center fw-bold mb-3 bg-light" type="password" inputmode="numeric" maxlength="6" value="" autocomplete="new-password" style="letter-spacing: 8px; font-size: 1.25rem; border-radius: 12px; padding: 10px;">
+    `;
+  }
+
+  function openPinModal(mode, notice = "") {
+    const content = MODE_CONTENT[mode] || MODE_CONTENT.setup;
+    const needsConfirm = mode === "setup" || mode === "reset";
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center";
+    backdrop.style.cssText = "background: rgba(0,0,0,0.6); z-index: 1050; backdrop-filter: blur(4px);";
+    backdrop.innerHTML = `
+      <div class="bg-white p-4 rounded-4 shadow-lg text-center" style="width: 420px; max-width: 90%;">
+        ${PIN_ICON}
+        <h4 class="fw-bold mb-1" style="font-size: 1.2rem; color: #1e293b;">${content.title}</h4>
+        <p class="text-muted small mb-4">${content.description}</p>
+        ${notice ? `<div class="alert alert-warning py-2 small mb-3">${notice}</div>` : ""}
+        <form class="text-start" autocomplete="off">
+          ${pinFieldMarkup("sensitive-pin", needsConfirm ? "รหัสผ่านใหม่" : "รหัสผ่าน")}
+          ${needsConfirm ? pinFieldMarkup("sensitive-confirm-pin", "ยืนยันรหัสผ่านใหม่") : ""}
+          <div class="text-danger small mb-3 error-box text-center" role="alert" hidden></div>
           
-          <div class="custom-card mb-4">
-            <div class="card-header-custom" id="detailHeader">
-              <div class="text-primary d-flex align-items-center gap-2">
-                <i class="bi bi-info-circle-fill fs-5"></i> 
-                <span>รายละเอียดปัญหา</span>
-              </div>
-              <div class="status-badge text-warning bg-warning bg-opacity-10 border-warning">กำลังดำเนินการ</div>
-            </div>
-            
-            <div class="p-4 d-flex gap-4 flex-wrap align-items-stretch">
-              <!-- รูปภาพ (ซ้าย) -->
-              <div style="flex: 0 0 350px; max-width: 100%;">
-                <div id="lockedImageUI" class="locked-img-box">
-                  <div class="locked-icon-circle">
-                    <i class="bi bi-shield-lock-fill text-danger fs-3"></i>
-                  </div>
-                  <h6 class="fw-bold mb-1" style="color: #111827;">รูปภาพถูกบล็อกโดย AI</h6>
-                  <p class="text-muted small mb-4">อาจมีเนื้อหา Sensitive / PDPA</p>
-                  <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" style="background-color: #3b82f6; border-color: #3b82f6; font-size: 0.9rem;" onclick="openUnlockModal()">
-                    <i class="bi bi-lock-fill me-1"></i> ปลดล็อกเพื่อดูรูปภาพ
-                  </button>
-                </div>
-                <!-- รูป Main หลังปลดล็อก -->
-                <div id="unlockedImageUI" class="d-none w-100 h-100">
-                  <img src="https://placehold.co/800x600/295ee6/ffffff?text=Main+Image" alt="Actual Image" class="img-fluid rounded-3 border w-100" style="object-fit: cover; height: 100%; cursor: pointer;" onclick="openGalleryModal(0)">
-                </div>
-              </div>
-
-              <div style="flex: 1; min-width: 280px; padding-top: 10px;">
-                <div class="info-row">
-                  <div class="info-label">ประเภท:</div>
-                  <div class="info-value">อื่นๆ</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-label">แจ้งเมื่อ:</div>
-                  <div class="info-value">อ. 11 ส.ค. 69 10:01</div>
-                </div>
-                <div class="info-row">
-                  <div class="info-label">อัปเดต:</div>
-                  <div class="info-value">จ. 31 ส.ค. 69 16:07</div>
-                </div>
-                <div class="info-row align-items-center mt-3">
-                  <div class="info-label">รายละเอียด:</div>
-                  <div id="lockedDetailUI" class="info-value d-flex align-items-center gap-3 w-100">
-                    <span style="color: #9ca3af; letter-spacing: 2px;">xxxxxxxxxxxxx</span>
-                    <button class="btn btn-primary btn-sm rounded-pill px-3 fw-bold shadow-sm" style="background-color: #3b82f6; border-color: #3b82f6; font-size: 0.8rem;" onclick="openUnlockModal()">
-                      <i class="bi bi-lock-fill me-1"></i> ปลดล็อก
-                    </button>
-                  </div>
-                  <div id="unlockedDetailUI" class="info-value d-none w-100">
-                    <span style="color: #111827; white-space: pre-wrap;">ข้อความที่ถูกปิดบังไว้ถูกแสดงผลแล้ว</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="d-flex gap-2 mt-3">
+            <button type="button" class="btn btn-light border w-50 py-2 fw-bold text-secondary rounded-pill modal-close-btn">ยกเลิก</button>
+            <button type="submit" class="btn btn-fondue w-50 fw-bold py-2 shadow-sm rounded-pill">${content.submitLabel}</button>
           </div>
-
-          <!-- Timeline Card -->
-          <div class="custom-card mb-4">
-            <div class="card-header-custom" style="background-color: #fff; padding: 12px 20px;">
-              <div class="d-flex align-items-center gap-2" style="color: #4b5563; font-size: 1rem;">
-                <i class="bi bi-clock-history"></i> Timeline การดำเนินงาน
-              </div>
-            </div>
-            <div class="timeline-container">
-              
-              <!-- Timeline Event 1: รอรับเรื่อง -->
-              <div class="timeline-row">
-                <div class="tl-center"><div class="tl-line"></div><div class="tl-dot"></div></div>
-                <div class="tl-right">
-                  <div class="tl-badge" style="background: #ffeca0; border: 1px solid #F59E0B; color: #333;">รอรับเรื่อง</div>
-                  <div class="fw-bold" style="font-size: 0.85rem; color: #555;">โดย คุณทดสอบ ระบบ</div>
-                  <div class="tl-time">อ. 11 ส.ค. 69 10:05</div>
-                  
-                  <div class="mt-2 d-flex flex-wrap gap-2">
-                     <img src="https://placehold.co/600x400/4a3b32/ffffff?text=Timeline+Image" alt="timeline img 1" class="timeline-img rounded-3 border shadow-sm" style="max-width: 140px; cursor: pointer;" onclick="openGalleryModal(1)">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Timeline Event 2: แจ้งเรื่อง (แสดง Main Image ในไทม์ไลน์ด้วย) -->
-              <div class="timeline-row">
-                <div class="tl-center"><div class="tl-dot" style="background: #e6f4ff; border-color: #0d6efd;"></div></div>
-                <div class="tl-right">
-                  <div class="tl-badge" style="background: #e6f4ff; border: 1px solid #0d6efd; color: #0d6efd;">แจ้งเรื่อง</div>
-                  <div class="fw-bold" style="font-size: 0.85rem; color: #555;">โดย ผู้แจ้ง</div>
-                  <div class="tl-time">อ. 11 ส.ค. 69 10:01</div>
-                  
-                  <div class="mt-2 d-flex flex-wrap gap-2">
-                     <!-- นี่คือ Main Image ที่มาอยู่ในไทม์ไลน์ตามที่แจ้ง -->
-                     <img src="https://placehold.co/800x600/295ee6/ffffff?text=Main+Image" alt="main img in timeline" class="timeline-img rounded-3 border shadow-sm" style="max-width: 140px; cursor: pointer;" onclick="openGalleryModal(0)">
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-      </div> 
-
-      <!-- AI Analysis Card -->
-      <div class="custom-card shadow-sm" style="border: 1px solid #d8b4fe;">
-        <div class="card-header-custom" style="background-color: #f3e8ff; border-bottom: none; padding: 12px 20px;">
-          <div class="text-primary d-flex align-items-center gap-2" style="color: #6b21a8 !important;">
-            <i class="bi bi-stars"></i> <span style="font-weight: 700;">AI วิเคราะห์ปัญหา</span>
-          </div>
-        </div>
-        <div class="p-4" style="background-color: #faf5ff;">
-           <div style="font-size: 0.9rem; color: #4b5563; line-height: 1.6;">
-             1. วิเคราะห์ปัญหา...<br>
-             2. แนะนำวิธีแก้ไข...
-           </div>
-        </div>
+          
+          ${mode === "unlock" ? '<div class="text-center mt-3"><button type="button" class="btn btn-link btn-sm text-muted forgot-pin-btn text-decoration-none">ลืมรหัสผ่าน?</button></div>' : ""}
+        </form>
       </div>
+    `;
+    document.body.append(backdrop);
+    document.body.style.overflow = "hidden";
 
-    </div>
+    const close = () => {
+      backdrop.remove();
+      document.body.style.overflow = "";
+    };
 
-    <!-- Right Sidebar -->
-    <div>
-      <div class="custom-card p-4 shadow-sm">
-        <div class="sidebar-title"><i class="bi bi-diagram-3-fill text-secondary"></i> หน่วยงานที่เกี่ยวข้อง</div>
-        <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
-          <div class="fw-bold" style="font-size: 0.9rem; color: #111827;">Traffy @ ITS Lab2</div>
-          <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25" style="font-size: 0.7rem; font-weight: normal;">หน่วยงานของคุณ</span>
-        </div>
-        <div class="d-flex align-items-center gap-2 mb-3 ms-2">
-          <div style="width: 2px; height: 16px; background-color: #d1d5db; margin-left: 6px;"></div>
-          <span class="fw-bold" style="font-size: 0.9rem; color: #111827;">ทดสอบ toy (2)</span>
-        </div>
-        <div class="fw-bold mb-3 mt-4" style="font-size: 0.9rem; color: #111827;">Fondue Tutorial</div>
-        <div class="fw-bold mb-1" style="font-size: 0.9rem; color: #111827;">Traffy Test</div>
+    const errorBox = backdrop.querySelector(".error-box");
+    const showError = (text) => {
+      errorBox.textContent = text;
+      errorBox.hidden = false;
+    };
+
+    backdrop.querySelectorAll(".modal-close-btn").forEach(btn => btn.addEventListener("click", close));
+    backdrop.querySelector(".forgot-pin-btn")?.addEventListener("click", () => {
+      close();
+      openPinModal("reset");
+    });
+
+    backdrop.querySelector("form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorBox.hidden = true;
+
+      const pin = backdrop.querySelector("#sensitive-pin").value;
+      if (pin.length !== 6) return showError("กรุณากรอกรหัสผ่านเป็นตัวเลข 6 หลัก");
+
+      if (needsConfirm) {
+        const confirmPin = backdrop.querySelector("#sensitive-confirm-pin").value;
+        if (pin !== confirmPin) return showError("รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน");
+      }
+
+      const submit = backdrop.querySelector("button[type='submit']");
+      submit.disabled = true;
+      submit.textContent = "กำลังดำเนินการ...";
+
+      try {
+        if (mode === "setup" || mode === "reset") {
+          await (mode === "setup" ? createSensitivePin : resetSensitivePin)(pin);
+          const result = await unlockSensitiveCase(lockedCase.ticketId, pin);
+          viewToken = result.viewToken;
+          close();
+          await renderUnlocked();
+          return;
+        }
+
+        const result = await unlockSensitiveCase(lockedCase.ticketId, pin);
+        viewToken = result.viewToken;
+        close();
+        await renderUnlocked();
+      } catch (error) {
+        submit.disabled = false;
+        submit.textContent = content.submitLabel;
+        showError(error.message || "เกิดข้อผิดพลาด กรุณาลองใหม่");
+      }
+    });
+
+    setTimeout(() => {
+      const pinInput = backdrop.querySelector("#sensitive-pin");
+      if (pinInput) {
+        pinInput.value = "";
+        pinInput.focus();
+      }
+    }, 50);
+  }
+
+  async function renderUnlocked() {
+    root.innerHTML = `
+      <div class="text-center py-4">
+        <div class="spinner-border text-warning mb-2" role="status"></div>
+        <div class="text-muted small">กำลังโหลดข้อมูล Sensitive...</div>
       </div>
+    `;
 
-      <div class="custom-card p-4 shadow-sm">
-        <div class="sidebar-title"><i class="bi bi-person-check-fill text-secondary"></i> ผู้รับผิดชอบ (ASSIGNEES)</div>
-        <div class="mt-3 p-3" style="background-color: #fffaf0; border: 1px solid #fed7aa; border-left: 4px solid #f97316; border-radius: 8px;">
-          <div style="font-size: 0.75rem; color: #c2410c; font-weight: 700; margin-bottom: 4px;">หน่วยงานของคุณ</div>
-          <div class="fw-bold mb-3" style="color: #9a3412; font-size: 0.9rem;">Traffy @ ITS Lab2</div>
-          <button class="btn btn-outline-warning w-100 btn-sm" style="border: 1px dashed #fdba74; color: #ea580c; font-weight: 600; background: transparent;">
-            <i class="bi bi-plus-circle me-1"></i> มอบหมายเจ้าหน้าที่เพิ่ม
+    const content = await getRenderedContent(lockedCase.ticketId);
+
+    document.getElementById("timelineCard").style.display = "none";
+    
+    const cardHead = document.querySelector("#mainProblemCard .card__head");
+    cardHead.innerHTML = `
+      <div class="d-flex align-items-center gap-2 flex-wrap w-100 justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-danger rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+            <i class="bi bi-shield-lock-fill me-1"></i> SENSITIVE
+          </span>
+          <span class="badge bg-secondary rounded-pill px-2 py-1 text-white" style="font-size: 0.75rem;">
+            ${content.pages.length} หน้า
+          </span>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+          <button class="action-btn"><i class="bi bi-pencil-square text-warning"></i> ปรับสถานะ</button>
+          <button class="action-btn"><i class="bi bi-chat-text-fill text-info"></i> คุยกับผู้แจ้ง</button>
+          <button class="action-btn"><i class="bi bi-people-fill text-info"></i> คุยเฉพาะ จนท.</button>
+          <button class="btn btn-dark rounded-pill px-3 py-1 fw-bold shadow-sm text-nowrap btn-fondue" id="open-gallery" style="font-size: 0.8rem;">
+            <i class="bi bi-images me-1"></i> ดูภาพทั้งหมด (${content.media.length})
           </button>
         </div>
-        <div class="text-center mt-3" style="font-size: 0.8rem; color: #9ca3af; cursor: pointer;">
-          หน่วยงานอื่นที่เกี่ยวข้อง (3 หน่วยงาน) <i class="bi bi-chevron-down"></i>
-        </div>
       </div>
+    `;
 
-      <div class="custom-card p-4 shadow-sm">
-        <div class="sidebar-title d-flex justify-content-between w-100 mb-3">
-          <div class="d-flex align-items-center gap-2">
-            <div style="width: 24px; height: 24px; background-color: #fee2e2; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-              <i class="bi bi-geo-alt-fill text-danger" style="font-size: 0.85rem;"></i>
-            </div>
-            สถานที่เกิดเหตุ
+    root.innerHTML = `
+      <section class="sensitive-rendered-card d-flex flex-column gap-3">
+        ${content.pages
+          .map(
+            (url, index) =>
+              `<div class="sensitive-rendered-page is-loaded position-relative text-center bg-light p-2 rounded-3 border image-wrapper">
+                 <div class="watermark-overlay" style="display: block;"></div>
+                 <img class="img-fluid rounded shadow-sm rendered-img-click" src="${url}" alt="รายละเอียดหน้า ${index + 1}" data-index="${index}" draggable="false" loading="lazy" style="max-height: 450px; object-fit: contain; cursor: pointer;">
+               </div>`
+          )
+          .join("")}
+      </section>
+    `;
+
+    document.getElementById("open-gallery").addEventListener("click", () => openGallery(content.media));
+    root.querySelectorAll(".rendered-img-click").forEach(img => {
+      img.addEventListener("click", (e) => {
+        const idx = parseInt(e.currentTarget.getAttribute("data-index"));
+        openGallery(content.media, idx);
+      });
+    });
+  }
+
+  function openGallery(media, startIndex = 0) {
+    let index = startIndex;
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "position-fixed top-0 start-0 w-100 h-100 d-flex flex-column text-white";
+    backdrop.style.cssText = "background: rgba(0,0,0,0.95); z-index: 9999;";
+    document.body.append(backdrop);
+
+    const draw = () => {
+      const current = media[index];
+      backdrop.innerHTML = `
+        <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary bg-dark bg-opacity-50">
+          <div>
+            <strong class="d-block" style="font-size: 0.95rem;">${current.label || 'ภาพหน้า ' + (index + 1)}</strong>
+            <span class="text-light opacity-75 small">${index + 1} / ${media.length}</span>
           </div>
-          <a href="#" class="text-primary" style="font-size: 0.8rem; font-weight: 600; text-decoration: none;">ดูที่อยู่แบบละเอียด</a>
+          <button type="button" class="btn-close btn-close-white fs-5 gallery-close-btn" aria-label="ปิด"></button>
         </div>
-        <div class="fw-bold mb-1" style="font-size: 0.95rem; color: #111827; line-height: 1.4;">
-          แขวงวังทองหลาง เขตวังทองหลาง<br>กรุงเทพมหานคร
-        </div>
-        <div class="d-flex align-items-center gap-2 mb-3 mt-2">
-          <i class="bi bi-geo text-secondary"></i>
-          <span style="font-size: 0.85rem; color: #6b7280;">13.76883, 100.59676</span>
-          <button class="btn btn-light btn-sm border py-0 px-2 text-secondary" style="font-size: 0.75rem;"><i class="bi bi-copy"></i> คัดลอก</button>
-        </div>
-        <div class="map-box" style="height: 180px; border: 1px solid #e5e7eb;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal ปลดล็อกข้อมูล Sensitive -->
-  <div class="modal fade" id="unlockModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow-lg rounded-4">
-        <div class="modal-body p-4 text-center">
-          
-          <div class="d-flex justify-content-center mb-3">
-            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F4F7FE;">
-              <i class="bi bi-lock-fill" style="font-size: 1.75rem; color: #295EE6;"></i>
-            </div>
+        <div class="flex-grow-1 d-flex align-items-center justify-content-center position-relative p-3">
+          ${media.length > 1 ? '<button type="button" class="btn btn-dark opacity-75 position-absolute start-0 ms-3 fs-4 rounded-circle p-2 gallery-prev-btn" style="width: 48px; height: 48px;">‹</button>' : ""}
+          <div class="image-wrapper text-center w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="watermark-overlay" style="display: block;"></div>
+            <img src="${current.url}" alt="${current.label || ''}" draggable="false" class="img-fluid rounded shadow" style="max-height: 85vh; object-fit: contain;">
           </div>
-          
-          <h4 class="fw-bolder mb-2" style="color: #2D3748; letter-spacing: -0.5px;">ปลดล็อกข้อมูล Sensitive</h4>
-          <p class="mb-4" style="color: #718096; font-size: 0.95rem;">กรุณาใส่รหัสผ่าน 6 หลักของคุณ (ทดสอบใช้: 123456)</p>
-
-          <div class="mb-4">
-            <input type="password" id="pinInput" maxlength="6" class="form-control form-control-lg text-center fw-bold shadow-none pin-input" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
-          </div>
-
-          <div class="d-flex gap-3 justify-content-center">
-            <button type="button" class="btn btn-light fw-bold flex-fill" style="border-radius: 16px; padding: 12px 0; background-color: #EDF2F7; color: #4A5568; border: none;" data-bs-dismiss="modal">
-              ยกเลิก
-            </button>
-            <button type="button" class="btn btn-primary fw-bold flex-fill" style="border-radius: 16px; padding: 12px 0; background-color: #295EE6; border: none; box-shadow: 0px 6px 16px rgba(41, 94, 230, 0.25);" onclick="confirmUnlock()">
-              ตกลง
-            </button>
-          </div>
-
+          ${media.length > 1 ? '<button type="button" class="btn btn-dark opacity-75 position-absolute end-0 me-3 fs-4 rounded-circle p-2 gallery-next-btn" style="width: 48px; height: 48px;">›</button>' : ""}
         </div>
-      </div>
-    </div>
-  </div>
+      `;
 
-  <!-- Modal ภาพเต็ม (ข้อมูลปกปิด) สำหรับแสดง Gallery -->
-  <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-        <div class="modal-header border-0" style="padding: 16px 20px;">
-          <h5 class="modal-title fw-bold" style="font-size: 1rem;">
-            <i class="bi bi-shield-lock-fill text-danger me-2"></i>ภาพเต็ม (ข้อมูลปกปิด)
-          </h5>
-          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        
-        <div class="modal-body p-0 position-relative d-flex flex-column" style="background-color: #000; min-height: 60vh;">
-          <div style="flex: 1; display: flex; align-items: center; justify-content: center; position: relative; padding: 20px;">
-            <img id="galleryImage" src="" alt="Gallery Image" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 12px; position: relative; z-index: 2;">
+      backdrop.querySelector(".gallery-close-btn").addEventListener("click", () => backdrop.remove());
+      backdrop.querySelector(".gallery-prev-btn")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        index = (index - 1 + media.length) % media.length;
+        draw();
+      });
+      backdrop.querySelector(".gallery-next-btn")?.addEventListener("click", (e) => {
+        index = (index + 1) % media.length;
+        draw();
+      });
+    };
 
-            <div id="galleryPrevBtn" onclick="prevGalleryImage(event)" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-              <i class="bi bi-chevron-left fs-5"></i>
-            </div>
-            <div id="galleryNextBtn" onclick="nextGalleryImage(event)" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); z-index: 20; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
-              <i class="bi bi-chevron-right fs-5"></i>
-            </div>
+    draw();
+  }
 
-            <div id="galleryCounter" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: white; background: rgba(0,0,0,0.6); padding: 4px 16px; border-radius: 20px; font-size: 0.85rem; z-index: 20; font-weight: bold; border: 1px solid rgba(255,255,255,0.2);">
-              1 / 2
-            </div>
-          </div>
-
-          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 10; background-image: url('data:image/svg+xml;utf8,<svg width=\'500\' height=\'400\' xmlns=\'http://www.w3.org/2000/svg\'><text x=\'50%\' y=\'45%\' fill=\'rgba(255, 255, 255, 0.18)\' font-size=\'36\' font-weight=\'900\' font-family=\'sans-serif\' text-anchor=\'middle\' dominant-baseline=\'middle\' transform=\'rotate(-30, 250, 200)\'>CONFIDENTIAL DATA</text><text x=\'50%\' y=\'55%\' fill=\'rgba(255, 255, 255, 0.18)\' font-size=\'24\' font-weight=\'bold\' font-family=\'sans-serif\' text-anchor=\'middle\' dominant-baseline=\'middle\' transform=\'rotate(-30, 250, 200)\'>TRAFFY FONDUE SENSITIVE</text></svg>'); background-repeat: repeat; background-position: center center;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    const unlockModalUI = new bootstrap.Modal(document.getElementById('unlockModal'));
-
-    function openUnlockModal() {
-      document.getElementById('pinInput').value = ''; 
-      unlockModalUI.show();
-    }
-
-    function confirmUnlock() {
-      const pin = document.getElementById('pinInput').value;
-      
-      if (pin === '123456') {
-        
-        document.getElementById('lockedImageUI').classList.add('d-none');
-        document.getElementById('unlockedImageUI').classList.remove('d-none');
-        
-        document.getElementById('lockedDetailUI').classList.remove('d-flex');
-        document.getElementById('lockedDetailUI').classList.add('d-none');
-        document.getElementById('unlockedDetailUI').classList.remove('d-none');
-
-        unlockModalUI.hide();
-        checkAndApplyWatermark();
-        
-      } else {
-        alert('รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่ (รหัสทดสอบ: 123456)');
-      }
-    }
-
-    function checkAndApplyWatermark() {
-      document.getElementById('watermarkOverlay').style.display = 'block';
-      const contentArea = document.getElementById('sensitiveContent');
-      contentArea.style.pointerEvents = 'none';
-      contentArea.style.userSelect = 'none';
-      contentArea.style.opacity = '0.95';
-      
-      document.getElementById('detailHeader').classList.add('d-none');
-      document.getElementById('detailHeader').classList.remove('d-flex');
-      
-      document.getElementById('sensitiveTopBanner').classList.remove('d-none');
-    }
-
-    // รวมรูปภาพ Main (index 0) และภาพ Timeline (index 1) = รวม 2 รูป
-    const galleryImages = [
-      "https://placehold.co/800x600/295ee6/ffffff?text=Main+Image",
-      "https://placehold.co/600x400/4a3b32/ffffff?text=Timeline+Image"
-    ];
-    
-    let currentGalleryIndex = 0;
-    const galleryModalUI = new bootstrap.Modal(document.getElementById('galleryModal'));
-
-    function openGalleryModal(startIndex = 0) {
-      currentGalleryIndex = startIndex;
-      updateGalleryUI();
-      galleryModalUI.show();
-    }
-
-    function updateGalleryUI() {
-      document.getElementById('galleryImage').src = galleryImages[currentGalleryIndex];
-      document.getElementById('galleryCounter').innerText = `${currentGalleryIndex + 1} / ${galleryImages.length}`;
-
-      const prevBtn = document.getElementById('galleryPrevBtn');
-      const nextBtn = document.getElementById('galleryNextBtn');
-
-      prevBtn.style.opacity = currentGalleryIndex === 0 ? '0.3' : '1';
-      prevBtn.style.cursor = currentGalleryIndex === 0 ? 'not-allowed' : 'pointer';
-
-      nextBtn.style.opacity = currentGalleryIndex === galleryImages.length - 1 ? '0.3' : '1';
-      nextBtn.style.cursor = currentGalleryIndex === galleryImages.length - 1 ? 'not-allowed' : 'pointer';
-    }
-
-    function prevGalleryImage(e) {
-      if(e) e.stopPropagation();
-      if (currentGalleryIndex > 0) {
-        currentGalleryIndex--;
-        updateGalleryUI();
-      }
-    }
-
-    function nextGalleryImage(e) {
-      if(e) e.stopPropagation();
-      if (currentGalleryIndex < galleryImages.length - 1) {
-        currentGalleryIndex++;
-        updateGalleryUI();
-      }
-    }
-  </script>
+  renderLocked();
+</script>
 </body>
 </html>
