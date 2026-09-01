@@ -46,84 +46,124 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
   function renderLocked() {
     setState("locked");
-    const wrap = el("div", "sv-locked");
+    const wrap = el("div", "sv-locked sv-locked-new");
 
-    const badge = el("div", "sv-badge");
-    badge.append(el("span", "sv-badge__dot"), el("span", null, "ข้อมูลอ่อนไหว • ต้องใส่ PIN เพื่อเปิดดู"));
+    const iconWrap = el("div", "sv-locked-icon-wrap");
+    iconWrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="#EF4444"/>
+      <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
 
-    const note = el(
-      "p",
-      "sv-note",
-      "รายละเอียดและภาพของเรื่องนี้ถูกเข้ารหัสไว้ เมื่อเปิดดู ระบบจะสร้างภาพพร้อมลายน้ำระบุตัวผู้เปิด"
-    );
+    const title = el("div", "sv-locked-title", "รูปภาพถูกบล็อกโดย AI");
+    const subtitle = el("div", "sv-locked-subtitle", "อาจมีเนื้อหา Sensitive / PDPA");
 
-    const button = el("button", "sv-button", "ปลดล็อกเพื่อดูรายละเอียด");
+    const button = el("button", "sv-button sv-button-unlock");
+    button.innerHTML = '<i class="fa-solid fa-unlock" style="font-size: 14px;"></i> ปลดล็อกเพื่อดูรูปภาพ';
     button.addEventListener("click", openUnlockFlow);
 
-    wrap.append(badge, note, button);
+    wrap.append(iconWrap, title, subtitle, button);
     render(wrap);
   }
 
   async function openUnlockFlow() {
     const status = await getCredentialStatus();
-    renderPinForm(status.hasPin ? "unlock" : "setup");
+    showPinModal(status.hasPin ? "unlock" : "setup");
   }
 
   /* ---------- ขั้นที่ 2: PIN ---------- */
 
-  function renderPinForm(mode, notice = "") {
+  function showPinModal(mode, notice = "") {
     setState(`pin:${mode}`);
-    const wrap = el("div", "sv-pin");
+    const overlay = el("div", "sv-modal-overlay");
+    
+    const modal = el("div", "sv-pin-modal");
+    
+    const iconWrap = el("div", "sv-pin-modal-icon");
+    iconWrap.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#714727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
 
-    wrap.append(
-      el("h3", "sv-pin__title", mode === "setup" ? "ตั้ง PIN 6 หลัก" : "กรอก PIN เพื่อปลดล็อก"),
-      el(
-        "p",
-        "sv-pin__hint",
-        mode === "setup"
-          ? "ใช้ PIN นี้ทุกครั้งที่เปิดดูข้อมูลอ่อนไหว"
-          : "prototype: PIN คือเลขที่ตั้งไว้ หรือ 123456 ถ้ายังไม่เคยตั้ง"
-      )
-    );
+    const title = el("h3", "sv-pin-modal-title", mode === "setup" ? "ตั้งรหัสผ่านความปลอดภัย" : "ปลดล็อกข้อมูล Sensitive");
+    const hint = el("p", "sv-pin-modal-subtitle", mode === "setup" ? "กรุณาตั้งรหัสผ่าน 6 หลักสำหรับการเข้าดูข้อมูล Sensitive" : "กรุณาใส่รหัสผ่าน 6 หลักของคุณ");
 
-    const input = el("input", "sv-pin__input");
-    input.type = "password";
-    input.inputMode = "numeric";
-    input.maxLength = 6;
-    input.placeholder = "••••••";
+    const form = el("div", "sv-pin-modal-form");
+    
+    const group1 = el("div", "sv-pin-input-group");
+    if (mode === "setup") {
+      group1.append(el("label", null, "รหัสผ่าน"));
+    }
+    const input1 = el("input", "sv-pin-modal-input");
+    input1.type = "password";
+    input1.inputMode = "numeric";
+    input1.maxLength = 6;
+    input1.placeholder = "••••••";
+    group1.append(input1);
+    form.append(group1);
 
-    const message = el("div", "sv-pin__message");
+    let input2;
+    if (mode === "setup") {
+      const group2 = el("div", "sv-pin-input-group");
+      group2.append(el("label", null, "ยืนยันรหัสผ่าน"));
+      input2 = el("input", "sv-pin-modal-input");
+      input2.type = "password";
+      input2.inputMode = "numeric";
+      input2.maxLength = 6;
+      input2.placeholder = "••••••";
+      group2.append(input2);
+      form.append(group2);
+    }
+
+    const message = el("div", "sv-pin-modal-error");
     if (notice) {
       message.textContent = notice;
       message.classList.add("is-notice");
     }
 
-    const submit = el("button", "sv-button", mode === "setup" ? "ตั้ง PIN" : "ปลดล็อก");
-    const cancel = el("button", "sv-button sv-button--ghost", "ยกเลิก");
-    cancel.addEventListener("click", renderLocked);
+    const actions = el("div", "sv-pin-modal-actions");
+    const cancel = el("button", "sv-pin-btn-cancel", "ยกเลิก");
+    const submit = el("button", "sv-pin-btn-submit", mode === "setup" ? "บันทึกและปลดล็อก" : "ตกลง");
+    
+    actions.append(cancel, submit);
+    form.append(message, actions);
+    
+    modal.append(iconWrap, title, hint, form);
+    overlay.append(modal);
 
+    const dismiss = () => {
+      overlay.remove();
+      renderLocked();
+    };
+
+    cancel.addEventListener("click", dismiss);
+    
     const fail = (text) => {
       message.textContent = text;
       message.classList.remove("is-notice");
       submit.disabled = false;
-      input.value = "";
-      input.focus();
+      input1.value = "";
+      if (input2) input2.value = "";
+      input1.focus();
     };
 
     const handleSubmit = async () => {
-      const pin = input.value.trim();
+      const pin = input1.value.trim();
       if (!/^\d{6}$/.test(pin)) return fail("PIN ต้องเป็นตัวเลข 6 หลัก");
+
+      if (mode === "setup") {
+        const pin2 = input2.value.trim();
+        if (pin !== pin2) return fail("รหัสผ่านไม่ตรงกัน");
+      }
 
       submit.disabled = true;
       message.textContent = "";
       try {
         if (mode === "setup") {
           await createSensitivePin(pin);
-          renderPinForm("unlock", "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก");
+          overlay.remove();
+          showPinModal("unlock", "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก");
           return;
         }
         const result = await unlockSensitiveCase(ticketId, pin);
         viewToken = result.viewToken;
+        overlay.remove();
         await renderUnlocked();
       } catch (error) {
         const remaining = error.attemptsRemaining;
@@ -136,15 +176,21 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     };
 
     submit.addEventListener("click", handleSubmit);
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") handleSubmit();
+    input1.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        if (mode === "setup") input2.focus();
+        else handleSubmit();
+      }
     });
+    if (input2) {
+      input2.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") handleSubmit();
+      });
+    }
 
-    const actions = el("div", "sv-pin__actions");
-    actions.append(submit, cancel);
-    wrap.append(input, message, actions);
-    render(wrap);
-    input.focus();
+    const root = container.closest('.phone') || document.body;
+    root.append(overlay);
+    input1.focus();
   }
 
   /* ---------- ขั้นที่ 3: ปลดล็อกแล้ว ---------- */
@@ -169,67 +215,99 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     setState("unlocked");
     const wrap = el("div", "sv-unlocked");
 
-    const bar = el("div", "sv-bar");
-    bar.append(
-      el(
-        "span",
-        null,
-        content.isRealRender
-          ? `เปิดดูอยู่ • ภาพ render จริงจากเรื่อง ${content.ticketId} พร้อมลายน้ำ`
-          : "เปิดดูอยู่ • ภาพมีลายน้ำระบุตัวผู้เปิด"
-      ),
-      (() => {
-        const lock = el("button", "sv-bar__lock", "ล็อกอีกครั้ง");
-        lock.addEventListener("click", async () => {
-          await revokeViewSession(viewToken);
-          viewToken = "";
-          renderLocked();
-        });
-        return lock;
-      })()
-    );
+    const header = el("div", "sv-unlocked-header");
+    
+    const titleWrap = el("div", "sv-unlocked-title-wrap");
+    titleWrap.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#714727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> <span class="sv-unlocked-title-text">ข้อมูล Sensitive</span>`;
+    
+    const galleryBtn = el("button", "sv-unlocked-gallery-btn");
+    galleryBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> ดูภาพทั้งหมด`;
+    galleryBtn.addEventListener("click", () => {
+       if (content.media && content.media.length > 0) {
+           openLightbox(content.media, 0);
+       }
+    });
 
-    const pages = el("div", "sv-pages");
+    header.append(titleWrap, galleryBtn);
+
+    const pages = el("div", "sv-pages-new");
     content.pages.forEach((url, index) => {
-      const figure = el("figure", "sv-page");
-      const image = el("img", "sv-page__img");
+      const figure = el("figure", "sv-page-card");
+      const image = el("img", "sv-page-img");
       image.src = url;
-      image.alt = `รายละเอียดหน้า ${index + 1}`;
+      image.alt = `หน้า ${index + 1}`;
       image.loading = "lazy";
-      figure.append(image, el("figcaption", "sv-page__caption", `หน้า ${index + 1} / ${content.pages.length}`));
+      figure.append(image);
       pages.append(figure);
     });
 
-    const mediaTitle = el("h4", "sv-media__title", "ภาพประกอบ");
-    const media = el("div", "sv-media");
-    content.media.forEach((item) => {
-      const button = el("button", "sv-media__item");
-      const image = el("img", null);
-      image.src = item.url;
-      image.alt = item.label;
-      image.loading = "lazy";
-      button.append(image, el("span", "sv-media__label", item.label));
-      button.addEventListener("click", () => openLightbox(item));
-      media.append(button);
-    });
-
-    wrap.append(bar, pages, mediaTitle, media);
+    wrap.append(header, pages);
     render(wrap);
   }
 
-  function openLightbox(item) {
+  function openLightbox(mediaArray, startIndex = 0) {
     const overlay = el("div", "sv-lightbox");
-    const image = el("img", null);
-    image.src = item.url;
-    image.alt = item.label;
-    const close = el("button", "sv-lightbox__close", "ปิด");
-    overlay.append(close, image, el("div", "sv-lightbox__label", item.label));
+    
+    // Header section
+    const header = el("div", "sv-lightbox-header");
+    const counter = el("span", "sv-lightbox__counter", `${startIndex + 1} / ${mediaArray.length}`);
+    const close = el("button", "sv-lightbox__close", "×");
+    header.append(counter, close);
+    
+    const track = el("div", "sv-lightbox-track");
+    
+    // Add Next/Prev buttons for desktop testing support
+    const prevBtn = el("button", "sv-lightbox-nav prev", "❮");
+    const nextBtn = el("button", "sv-lightbox-nav next", "❯");
+    
+    prevBtn.addEventListener("click", () => {
+      track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
+    });
+    nextBtn.addEventListener("click", () => {
+      track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
+    });
+
+    mediaArray.forEach((item) => {
+      const slide = el("div", "sv-lightbox-slide");
+      const image = el("img", null);
+      image.src = item.url;
+      image.alt = item.label || "รูปภาพปัญหา";
+      
+      const caption = el("div", "sv-lightbox__label", item.label || "ไม่มีชื่อภาพ");
+      slide.append(image, caption);
+      track.append(slide);
+    });
+
+    overlay.append(header, prevBtn, nextBtn, track);
+
     const dismiss = () => overlay.remove();
     close.addEventListener("click", dismiss);
-    overlay.addEventListener("click", (event) => {
-      if (event.target === overlay) dismiss();
+    
+    // Update counter on scroll
+    track.addEventListener("scroll", () => {
+      const slideWidth = track.clientWidth;
+      if (slideWidth > 0) {
+        const currentIndex = Math.round(track.scrollLeft / slideWidth);
+        counter.textContent = `${currentIndex + 1} / ${mediaArray.length}`;
+        
+        // Hide/Show buttons
+        prevBtn.style.display = currentIndex === 0 ? "none" : "flex";
+        nextBtn.style.display = currentIndex === mediaArray.length - 1 ? "none" : "flex";
+      }
     });
-    document.body.append(overlay);
+
+    const root = container.closest('.phone') || document.body;
+    root.append(overlay);
+    
+    // Initial button state
+    prevBtn.style.display = startIndex === 0 ? "none" : "flex";
+    nextBtn.style.display = startIndex === mediaArray.length - 1 ? "none" : "flex";
+
+    if (startIndex > 0) {
+      setTimeout(() => {
+        track.scrollLeft = startIndex * track.clientWidth;
+      }, 0);
+    }
   }
 
   renderLocked();

@@ -1,7 +1,8 @@
 /* สไตล์กลางของ flow sensitive — ใช้ตัวแปรสี ให้แต่ละ shell override ได้
    web shell กับ app shell ตั้ง --sv-accent ต่างกัน แต่โครงเหมือนกัน */
 
-.sv-root {
+.sv-root,
+.sv-modal-overlay {
   --sv-accent: #714727;
   --sv-accent-soft: #f4e8dd;
   --sv-text: #2f241e;
@@ -118,122 +119,357 @@
   color: var(--sv-muted);
 }
 
-.sv-bar {
+.sv-unlocked-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.sv-unlocked-title-wrap {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: var(--sv-radius);
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #000;
+}
+
+.sv-unlocked-gallery-btn {
+  display: flex;
+  align-items: center;
   background: var(--sv-accent-soft);
   color: var(--sv-accent);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.sv-bar__lock {
-  appearance: none;
-  border: 1px solid currentColor;
-  background: transparent;
-  color: inherit;
-  border-radius: 999px;
-  padding: 5px 12px;
-  font: inherit;
-  font-size: 12px;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
 }
 
-.sv-pages {
+.sv-pages-new {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sv-page-card {
+  margin: 0;
+  border: 1px solid #EAEAEA;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.sv-page-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sv-lightbox {
+  position: absolute;
+  inset: 0;
+  z-index: 999;
+  background: rgba(20, 14, 10, 0.95);
+  display: flex;
+  flex-direction: column;
+}
+
+.sv-lightbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  color: #fff;
+  z-index: 10;
+}
+
+.sv-lightbox__counter {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sv-lightbox__close {
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.sv-lightbox-track {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.sv-lightbox-track::-webkit-scrollbar {
+  display: none;
+}
+
+.sv-lightbox-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.sv-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 20;
+}
+.sv-lightbox-nav.prev { left: 10px; }
+.sv-lightbox-nav.next { right: 10px; }
+
+.sv-lightbox-slide img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.sv-lightbox__label { 
+  color: #f3e6da; 
+  font-size: 15px; 
+  text-align: center;
+  background: rgba(0,0,0,0.5);
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+/* 
+ * Styles for the new locked state 
+ */
+.sv-locked-new {
+  align-items: center;
+  justify-content: center;
+  background: #FAFAFA;
+  border: 1px solid #EAEAEA;
+  border-radius: var(--sv-radius);
+  padding: 32px 16px 24px;
+  gap: 6px;
+}
+
+.sv-locked-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #FDE4E4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.sv-locked-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.sv-locked-subtitle {
+  font-size: 14px;
+  color: #94A3B8;
+  margin-bottom: 16px;
+}
+
+.sv-button-unlock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--sv-accent);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  width: 100%;
+  max-width: 240px;
+}
+
+/*
+ * PIN Modal styles
+ */
+.sv-modal-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.sv-pin-modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 320px;
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.sv-pin-modal-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1px solid #f0e6dd;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 0 5px #faf6f3;
+  color: #714727;
+}
+
+.sv-pin-modal-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sv-pin-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.sv-pin-modal-subtitle {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0 0 24px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.sv-pin-modal-form {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.sv-page { margin: 0; }
-
-.sv-page__img {
-  display: block;
-  width: 100%;
-  border-radius: var(--sv-radius);
-  border: 1px solid var(--sv-line);
-}
-
-.sv-page__caption {
-  padding-top: 6px;
-  font-size: 12px;
-  color: var(--sv-muted);
-  text-align: right;
-}
-
-.sv-media__title {
-  margin: 6px 0 0;
-  font-size: 15px;
-  color: var(--sv-text);
-}
-
-.sv-media {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 10px;
-}
-
-.sv-media__item {
-  appearance: none;
-  border: 1px solid var(--sv-line);
-  border-radius: var(--sv-radius);
-  background: #fff;
-  padding: 6px;
-  cursor: pointer;
+.sv-pin-input-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font: inherit;
+  gap: 8px;
 }
 
-.sv-media__item img {
+.sv-pin-input-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1E293B;
+}
+
+.sv-pin-modal-input {
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 9px;
-}
-
-.sv-media__label {
-  font-size: 12px;
-  color: var(--sv-muted);
-}
-
-.sv-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: rgba(20, 14, 10, 0.88);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 24px;
-}
-
-.sv-lightbox img {
-  max-width: min(720px, 92vw);
-  max-height: 74vh;
+  box-sizing: border-box;
+  padding: 12px 16px 12px 32px;
+  border: 1.5px solid var(--sv-accent);
   border-radius: 12px;
+  background: #fff;
+  font-size: 24px;
+  letter-spacing: 16px;
+  text-align: center;
+  color: #1E293B;
+  outline: none;
 }
 
-.sv-lightbox__label { color: #f3e6da; font-size: 14px; }
+.sv-pin-modal-input:focus {
+  border-color: var(--sv-accent);
+}
 
-.sv-lightbox__close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+.sv-pin-modal-input::placeholder {
+  color: #CBD5E1;
+  font-size: 24px;
+  letter-spacing: 16px;
+}
+
+.sv-pin-modal-error {
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--sv-danger);
+  text-align: center;
+}
+
+.sv-pin-modal-error.is-notice {
+  color: #2E7D32;
+}
+
+.sv-pin-modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.sv-pin-btn-cancel {
+  flex: 2;
   appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  background: transparent;
-  color: #fff;
-  border-radius: 999px;
-  padding: 7px 16px;
-  font: inherit;
+  border: none;
+  background: #F8FAFC;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 24px;
   cursor: pointer;
+}
+
+.sv-pin-btn-submit {
+  flex: 3;
+  appearance: none;
+  border: none;
+  background: var(--sv-accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 14px;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.sv-pin-btn-submit:disabled {
+  opacity: 0.6;
 }
