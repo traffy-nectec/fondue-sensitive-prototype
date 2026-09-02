@@ -19,35 +19,41 @@
     background: #f4f6f9;
     color: #1e293b;
   }
+
   .topbar {
     background: #ffffff;
     border-bottom: 1px solid #e2e8f0;
-    padding: 0 28px;
-    height: 64px;
+    padding: 0 24px;
+    min-height: 64px;
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: space-between;
+    gap: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    flex-wrap: wrap;
   }
-  .topbar__brand { font-weight: 700; font-size: 18px; color: #714727; }
-  .topbar__nav { display: flex; gap: 20px; font-size: 14px; color: #64748b; font-weight: 500; }
+  .topbar__brand { font-weight: 700; font-size: 16px; color: #714727; white-space: nowrap; }
+  .topbar__nav { display: flex; gap: 16px; font-size: 14px; color: #64748b; font-weight: 500; flex-wrap: wrap; }
   .topbar__nav span[aria-current] { color: #714727; font-weight: 700; border-bottom: 2px solid #714727; padding-bottom: 4px; }
-  .topbar__right { margin-left: auto; font-size: 13px; color: #94a3b8; background: #f8fafc; padding: 6px 12px; border-radius: 20px; border: 1px solid #e2e8f0; }
+  .topbar__right { font-size: 12px; color: #94a3b8; background: #f8fafc; padding: 4px 10px; border-radius: 20px; border: 1px solid #e2e8f0; white-space: nowrap; }
+
+  @media (max-width: 768px) {
+    .topbar { padding: 10px 16px; }
+    .topbar__brand { font-size: 15px; }
+    .topbar__nav { gap: 12px; font-size: 13px; }
+    .topbar__right { display: none; }
+  }
 
   .layout {
     max-width: 1440px;
     margin: 24px auto;
     padding: 0 24px;
     display: grid;
-    grid-template-columns: 280px 1fr 340px;
+    grid-template-columns: 1fr 340px;
     gap: 24px;
     align-items: start;
   }
-  @media (max-width: 1200px) { 
-    .layout { grid-template-columns: 280px 1fr; }
-    .right-sidebar { grid-column: span 2; }
-  }
-  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; padding: 0 12px; } }
 
   .card {
     background: #ffffff;
@@ -66,30 +72,10 @@
     justify-content: space-between;
     align-items: center;
     background: #ffffff;
+    flex-wrap: wrap;
+    gap: 10px;
   }
   .card__body { padding: 20px; }
-
-  .list-item {
-    padding: 14px 20px;
-    border-bottom: 1px solid #f1f5f9;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .list-item.is-active { background: #fcf6f0; box-shadow: inset 4px 0 0 #714727; }
-  .list-item__id { font-weight: 700; color: #1e293b; }
-  .list-item__meta { color: #64748b; font-size: 12px; margin-top: 2px; }
-  
-  .lock-chip {
-    display: inline-block;
-    margin-top: 6px;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: #fef2f2;
-    color: #dc2626;
-    font-size: 11px;
-    font-weight: 700;
-    border: 1px solid #fee2e2;
-  }
 
   .status-pill {
     background-color: #fef3c7;
@@ -107,6 +93,8 @@
     display: flex;
     margin-bottom: 16px;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
   }
   .info-label {
     width: 110px;
@@ -118,15 +106,20 @@
     flex: 1;
     color: #1e293b;
     font-size: 0.9rem;
+    min-width: 200px;
   }
 
-  /* ปุ่มธีม Fondue สีน้ำตาล */
   .btn-fondue {
     background-color: #714727 !important;
     border-color: #714727 !important;
     color: #fff !important;
     border-radius: 999px !important;
     font-weight: 600;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px;
+    white-space: nowrap !important;
   }
   .btn-fondue:hover {
     background-color: #5c391f !important;
@@ -164,6 +157,49 @@
 
   .sidebar-title { font-weight: 700; font-size: 0.95rem; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .map-box { background-color: #f1f5f9; height: 160px; border-radius: 12px; margin-top: 12px; background-image: url('https://placehold.co/400x200?text=Map+Placeholder'); background-size: cover; background-position: center; border: 1px solid #e2e8f0; }
+
+  /* Grid ตัวเลือกประเภทปัญหาใน Modal */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  @media(max-width: 576px) { .category-grid { grid-template-columns: repeat(2, 1fr); } }
+  .category-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .category-item:hover { border-color: #714727; background: #fcf6f0; }
+  .category-item.selected { border-color: #714727; background: #fcf6f0; box-shadow: 0 0 0 2px #714727; }
+  .category-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #475569;
+  }
+  .category-item.selected .category-icon { background: #714727; color: #fff; }
+  .category-label { font-size: 0.8rem; font-weight: 600; color: #1e293b; }
+
+  /* ซ่อน Scrollbar สำหรับคอนเทนเนอร์ปุ่มแนวนอน */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 </head>
 <body>
@@ -171,48 +207,29 @@
 <div class="topbar">
   <div class="topbar__brand"><i class="bi bi-shield-check me-2"></i>Traffy Fondue · เจ้าหน้าที่</div>
   <nav class="topbar__nav">
-    <span>แผนที่</span><span aria-current="page">รายการแจ้ง</span><span>สถิติ</span><span>ตั้งค่า</span>
+    <span>แผนที่</span>
+    <span aria-current="page">รายการแจ้ง</span>
+    <span>สถิติ</span>
+    <span>ตั้งค่า</span>
   </nav>
   <div class="topbar__right">โหมดจำลองหน้าจอเจ้าหน้าที่</div>
 </div>
 
 <div class="layout">
   
-  <aside class="card shadow-sm">
-    <div class="card__head">
-      <span>รายการแจ้งเรื่อง</span>
-      <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1" style="font-size: 0.75rem;">3 รายการ</span>
-    </div>
-    <div class="list-item">
-      <div class="list-item__id">2026-K4M1PQ</div>
-      <div class="list-item__meta">ถนน · กำลังดำเนินการ</div>
-    </div>
-    <div class="list-item is-active">
-      <div class="list-item__id">2026-6U23NF</div>
-      <div class="list-item__meta">ทางเท้า · กำลังดำเนินการ</div>
-      <div><span class="lock-chip"><i class="bi bi-lock-fill me-1"></i> ข้อมูลอ่อนไหว</span></div>
-    </div>
-    <div class="list-item">
-      <div class="list-item__id">2026-B8T7ZC</div>
-      <div class="list-item__meta">แสงสว่าง · เสร็จสิ้น</div>
-    </div>
-  </aside>
-
   <main style="display:flex;flex-direction:column;gap:0px; min-width: 0;">
 
     <section class="card shadow-sm" id="mainProblemCard">
       <div class="card__head">
         <div class="d-flex align-items-center gap-2">
           <i class="bi bi-file-text-fill text-primary"></i>
-          <span>รายละเอียดปัญหา</span>
+          <span>รายละเอียดปัญหา (2026-6U23NF)</span>
         </div>
         <div class="status-pill">กำลังดำเนินการ</div>
       </div>
       
-      <!-- พื้นที่แสดงผล Sensitive Flow (ก่อน/หลังปลดล็อก) -->
-      <div class="card__body" id="sensitive-root">
-        <!-- โหลดด้วย Script ด้านล่าง -->
-      </div>
+      <!-- พื้นที่แสดงผล Sensitive Flow -->
+      <div class="card__body" id="sensitive-root"></div>
     </section>
 
     <!-- Timeline -->
@@ -307,6 +324,7 @@
 <script type="module">
   import {
     createSensitivePin,
+    getCredentialStatus,
     getRenderedContent,
     lockedCase,
     resetSensitivePin,
@@ -329,21 +347,48 @@
     setup: { 
       title: "ตั้งรหัสผ่านความปลอดภัย", 
       description: "กรุณาตั้งรหัสผ่าน 6 หลักสำหรับการเข้าดูข้อมูล Sensitive", 
-      submitLabel: "บันทึกและปลดล็อก" 
+      submitLabel: "บันทึกและปลดล็อก",
+      showCancel: true 
     },
     reset: { 
       title: "ตั้งรหัสผ่านใหม่", 
       description: "กรุณากรอกรหัสผ่านใหม่ 6 หลักที่ต้องการใช้งาน", 
-      submitLabel: "บันทึกรหัสผ่านใหม่" 
+      submitLabel: "บันทึกรหัสผ่านใหม่",
+      showCancel: true 
     },
     unlock: { 
       title: "ปลดล็อกข้อมูล Sensitive", 
       description: "กรุณากรอกรหัสผ่าน 6 หลักเพื่อดูรายละเอียด", 
-      submitLabel: "ปลดล็อก" 
+      submitLabel: "ปลดล็อก",
+      showCancel: true 
     },
   };
 
+  const CATEGORIES = [
+    { name: "น้ำท่วม", icon: "bi-water" },
+    { name: "ความสะอาด", icon: "bi-trash" },
+    { name: "ไฟฟ้า", icon: "bi-lightning-charge" },
+    { name: "ทางเท้า", icon: "bi-signpost-split" },
+    { name: "หาบเร่แผงลอย", icon: "bi-shop" },
+    { name: "ประปา", icon: "bi-droplet" },
+    { name: "ถนน", icon: "bi-road" },
+    { name: "ผิดกฎจราจร", icon: "bi-cone-striped" },
+    { name: "ทุจริต", icon: "bi-shield-exclamation" },
+    { name: "สัตว์", icon: "bi-shield" },
+    { name: "เสียง", icon: "bi-volume-up" },
+    { name: "โรงเรียน", icon: "bi-mortarboard" },
+    { name: "ฝุ่นควัน", icon: "bi-cloud-haze" },
+    { name: "คนเร่ร่อน", icon: "bi-person" },
+    { name: "แท็กซี่/รถเมล์", icon: "bi-bus-front" },
+    { name: "ต้นไม้", icon: "bi-tree" },
+    { name: "ภัยออนไลน์", icon: "bi-laptop" },
+    { name: "ขอความช่วยเหลือ", icon: "bi-heart" },
+    { name: "สุขภาพ", icon: "bi-hospital" },
+    { name: "อื่นๆ", icon: "bi-three-dots" }
+  ];
+
   let viewToken = "";
+  let currentCategory = lockedCase.category || "อื่นๆ";
 
   function lockedMarkup() {
     return `
@@ -353,10 +398,10 @@
             <div style="width:64px; height:64px; background-color:#fee2e2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
               <i class="bi bi-shield-lock-fill fs-2 text-danger"></i>
             </div>
-            <h6 class="fw-bold mb-1 text-dark" style="font-size: 1.05rem;">รูปภาพถูกบล็อกโดย AI</h6>
-            <p class="text-muted small mb-4">อาจมีเนื้อหา Sensitive / PDPA</p>
+            <h6 class="fw-bold mb-1 text-dark" style="font-size: 1.05rem;">ภาพถูกปกปิดข้อมูล sensitive</h6>
+            <p class="text-muted small mb-4">ปลดล็อกเพื่อดูภาพฉบับเต็ม</p>
             <button type="button" class="btn btn-fondue px-4 py-2 shadow-sm" id="unlock-button">
-              ${LOCK_ICON} ปลดล็อกเพื่อดูรูปภาพ
+              ${LOCK_ICON} ปลดล็อก
             </button>
           </div>
         </div>
@@ -366,8 +411,10 @@
             <div class="info-row">
               <div class="info-label">ประเภท:</div>
               <div class="info-value d-flex align-items-center gap-2">
-                <span>${lockedCase.category}</span>
-                <button class="btn btn-light btn-sm border py-0 px-2 text-secondary rounded-pill" style="font-size: 0.75rem;"><i class="bi bi-pencil-square"></i> เปลี่ยน</button>
+                <span id="current-category-label">${currentCategory}</span>
+                <button class="btn btn-light btn-sm border py-1 px-3 text-secondary rounded-pill shadow-sm" id="change-category-btn-locked" style="font-size: 0.8rem; font-weight: 600;">
+                  <i class="bi bi-pencil-square me-1"></i> เปลี่ยน
+                </button>
               </div>
             </div>
             <div class="info-row">
@@ -380,7 +427,7 @@
             </div>
             <div class="info-row align-items-center">
               <div class="info-label">รายละเอียด:</div>
-              <div class="info-value d-flex align-items-center justify-content-between w-100">
+              <div class="info-value d-flex align-items-center justify-content-between w-100" style="gap: 12px;">
                 <span class="text-muted" style="letter-spacing: 2px;">xxxxxxxxxxxxx</span>
                 <button type="button" class="btn btn-fondue btn-sm px-3 shadow-sm" id="unlock-button-inline">
                   ${LOCK_ICON} ปลดล็อก
@@ -394,7 +441,7 @@
             <div style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 12px;">
               <i class="bi bi-grid-fill me-1"></i> เมนูจัดการด่วน
             </div>
-            <div class="d-flex align-items-center gap-2 flex-nowrap">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
               <button class="action-btn"><i class="bi bi-pencil-square text-warning"></i> ปรับสถานะ</button>
               <button class="action-btn"><i class="bi bi-chat-text-fill text-info"></i> คุยกับผู้แจ้ง</button>
               <button class="action-btn"><i class="bi bi-people-fill text-info"></i> คุยเฉพาะ จนท.</button>
@@ -409,11 +456,11 @@
     root.innerHTML = lockedMarkup();
     document.getElementById("unlock-button").addEventListener("click", openUnlockFlow);
     document.getElementById("unlock-button-inline").addEventListener("click", openUnlockFlow);
+    document.getElementById("change-category-btn-locked").addEventListener("click", openCategoryModal);
   }
 
-  // บังคับเปิดหน้าต่างตั้งรหัสผ่าน (setup) ทันทีเมื่อกดปุ่มปลดล็อก
   async function openUnlockFlow() {
-    openPinModal("setup");
+    openPinModal("reset");
   }
 
   function pinFieldMarkup(id, label) {
@@ -437,13 +484,13 @@
         <p class="text-muted small mb-4">${content.description}</p>
         ${notice ? `<div class="alert alert-warning py-2 small mb-3">${notice}</div>` : ""}
         <form class="text-start" autocomplete="off">
-          ${pinFieldMarkup("sensitive-pin", needsConfirm ? "รหัสผ่านใหม่" : "รหัสผ่าน")}
+          ${pinFieldMarkup("sensitive-pin", "รหัสผ่านใหม่")}
           ${needsConfirm ? pinFieldMarkup("sensitive-confirm-pin", "ยืนยันรหัสผ่านใหม่") : ""}
           <div class="text-danger small mb-3 error-box text-center" role="alert" hidden></div>
           
           <div class="d-flex gap-2 mt-3">
             <button type="button" class="btn btn-light border w-50 py-2 fw-bold text-secondary rounded-pill modal-close-btn">ยกเลิก</button>
-            <button type="submit" class="btn btn-fondue w-50 fw-bold py-2 shadow-sm rounded-pill">${content.submitLabel}</button>
+            <button type="submit" class="btn btn-fondue w-50 py-2 shadow-sm rounded-pill">${content.submitLabel}</button>
           </div>
           
           ${mode === "unlock" ? '<div class="text-center mt-3"><button type="button" class="btn btn-link btn-sm text-muted forgot-pin-btn text-decoration-none">ลืมรหัสผ่าน?</button></div>' : ""}
@@ -489,10 +536,11 @@
       try {
         if (mode === "setup" || mode === "reset") {
           await (mode === "setup" ? createSensitivePin : resetSensitivePin)(pin);
-          const result = await unlockSensitiveCase(lockedCase.ticketId, pin);
-          viewToken = result.viewToken;
           close();
-          await renderUnlocked();
+          openPinModal(
+            "unlock", 
+            mode === "setup" ? "ตั้งรหัสผ่านสำเร็จ กรุณากรอกรหัสผ่านเพื่อปลดล็อก" : "บันทึกรหัสผ่านใหม่แล้ว กรุณากรอกรหัสผ่านเพื่อปลดล็อก"
+          );
           return;
         }
 
@@ -514,6 +562,63 @@
         pinInput.focus();
       }
     }, 50);
+  }
+
+  function openCategoryModal() {
+    let selectedCat = currentCategory;
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center";
+    backdrop.style.cssText = "background: rgba(0,0,0,0.6); z-index: 1050; backdrop-filter: blur(4px);";
+    backdrop.innerHTML = `
+      <div class="bg-white p-4 rounded-4 shadow-lg" style="width: 560px; max-width: 95%;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0" style="color: #1e293b;">เปลี่ยนประเภทปัญหา</h5>
+          <button type="button" class="btn-close modal-close-btn" aria-label="ปิด"></button>
+        </div>
+        
+        <div class="category-grid mb-4">
+          ${CATEGORIES.map(cat => `
+            <div class="category-item ${cat.name === selectedCat ? 'selected' : ''}" data-name="${cat.name}">
+              <div class="category-icon"><i class="bi ${cat.icon}"></i></div>
+              <div class="category-label">${cat.name}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+          <button type="button" class="btn btn-light border px-4 py-2 fw-bold text-secondary rounded-pill modal-close-btn">ยกเลิก</button>
+          <button type="button" class="btn btn-fondue px-4 py-2 rounded-pill" id="save-category-btn">บันทึกข้อมูล</button>
+        </div>
+      </div>
+    `;
+    document.body.append(backdrop);
+    document.body.style.overflow = "hidden";
+
+    const close = () => {
+      backdrop.remove();
+      document.body.style.overflow = "";
+    };
+
+    backdrop.querySelectorAll(".modal-close-btn").forEach(btn => btn.addEventListener("click", close));
+
+    backdrop.querySelectorAll(".category-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        backdrop.querySelectorAll(".category-item").forEach(i => i.classList.remove("selected"));
+        const target = e.currentTarget;
+        target.classList.add("selected");
+        selectedCat = target.getAttribute("data-name");
+      });
+    });
+
+    backdrop.querySelector("#save-category-btn").addEventListener("click", () => {
+      currentCategory = selectedCat;
+      const labelEl = document.getElementById("current-category-label");
+      if (labelEl) labelEl.textContent = currentCategory;
+      const unlockedLabelEl = document.getElementById("unlocked-category-text");
+      if (unlockedLabelEl) unlockedLabelEl.textContent = currentCategory;
+      close();
+    });
   }
 
   async function renderUnlocked() {
@@ -539,11 +644,13 @@
             ${content.pages.length} หน้า
           </span>
         </div>
-        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-          <button class="action-btn"><i class="bi bi-pencil-square text-warning"></i> ปรับสถานะ</button>
-          <button class="action-btn"><i class="bi bi-chat-text-fill text-info"></i> คุยกับผู้แจ้ง</button>
-          <button class="action-btn"><i class="bi bi-people-fill text-info"></i> คุยเฉพาะ จนท.</button>
-          <button class="btn btn-dark rounded-pill px-3 py-1 fw-bold shadow-sm text-nowrap btn-fondue" id="open-gallery" style="font-size: 0.8rem;">
+        <!-- ปรับเป็น flex-wrap และเพิ่ม justify-content-end เพื่อให้ปุ่มตกลงมาบรรทัดใหม่ได้โดยไม่ต้องเลื่อนซ้ายขวา -->
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto justify-content-end" style="padding-bottom: 2px;">
+          <button class="action-btn" id="change-category-btn" style="padding: 4px 8px; font-size: 0.75rem;"><i class="bi bi-pencil-square text-secondary"></i> เปลี่ยนประเภท</button>
+          <button class="action-btn" style="padding: 4px 8px; font-size: 0.75rem;"><i class="bi bi-pencil-square text-warning"></i> ปรับสถานะ</button>
+          <button class="action-btn" style="padding: 4px 8px; font-size: 0.75rem;"><i class="bi bi-chat-text-fill text-info"></i> คุยกับผู้แจ้ง</button>
+          <button class="action-btn" style="padding: 4px 8px; font-size: 0.75rem;"><i class="bi bi-people-fill text-info"></i> คุยเฉพาะ จนท.</button>
+          <button class="btn btn-dark rounded-pill fw-bold shadow-sm text-nowrap btn-fondue" id="open-gallery" style="padding: 4px 12px !important; font-size: 0.75rem;">
             <i class="bi bi-images me-1"></i> ดูภาพทั้งหมด (${content.media.length})
           </button>
         </div>
@@ -551,7 +658,7 @@
     `;
 
     root.innerHTML = `
-      <section class="sensitive-rendered-card d-flex flex-column gap-3">
+      <section class="sensitive-rendered-card d-flex flex-column gap-3 mt-3">
         ${content.pages
           .map(
             (url, index) =>
@@ -565,6 +672,8 @@
     `;
 
     document.getElementById("open-gallery").addEventListener("click", () => openGallery(content.media));
+    document.getElementById("change-category-btn").addEventListener("click", openCategoryModal);
+
     root.querySelectorAll(".rendered-img-click").forEach(img => {
       img.addEventListener("click", (e) => {
         const idx = parseInt(e.currentTarget.getAttribute("data-index"));
