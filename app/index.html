@@ -12,7 +12,7 @@
     rel="stylesheet">
   <!-- ใช้ FontAwesome สำหรับ Icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../shared/sensitive-flow.css?v=2">
+  <link rel="stylesheet" href="../shared/sensitive-flow.css?v=4">
   <style>
     * {
       box-sizing: border-box;
@@ -113,6 +113,13 @@
     .detail-top-row {
       display: flex;
       gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    /* แถบปุ่มปลดล็อกแทรกอยู่ระหว่าง .detail-top-row กับแถวสถานะ
+       ตัวบนมี margin-bottom อยู่แล้ว เลยเติมด้านล่างให้ระยะเท่ากันทั้งสองข้าง */
+    .detail-top-row + .sv-desc-unlock {
+      margin-top: 0;
       margin-bottom: 16px;
     }
 
@@ -648,7 +655,7 @@
   </div>
 
   <script type="module">
-    import { mountSensitiveFlow } from "../shared/sensitive-flow.js?v=2";
+    import { attachDescriptionUnlock, mountSensitiveFlow } from "../shared/sensitive-flow.js?v=4";
     import { lockedCase, lockedTimeline } from "../shared/sensitive-mock.js";
 
     // ข้อความที่บอท censor แล้ว ปิดเฉพาะคำที่เป็นข้อมูลส่วนบุคคล ไม่ได้ปิดทั้งก้อน
@@ -683,7 +690,7 @@
       .join("");
 
     // เรียกใช้งาน Sensitive Flow ใส่ลงใน #sensitive-slot
-    mountSensitiveFlow(document.getElementById("sensitive-slot"), {
+    const flow = mountSensitiveFlow(document.getElementById("sensitive-slot"), {
       ticketId: lockedCase.ticketId,
       onStateChange: (state) => {
         const topHeader = document.getElementById("sensitive-top-header");
@@ -701,6 +708,16 @@
         }
       }
     });
+
+    // ปุ่มปลดล็อกจุดที่สอง ต่อท้ายข้อความรายละเอียดที่ถูก censor
+    // ปุ่มบนภาพอย่างเดียวไม่พอ เพราะคนที่อยากอ่าน "ข้อความ" จะไม่มองไปที่ภาพ
+    // ต่อท้าย .detail-top-row ทั้งแถว ไม่ใช่ต่อท้ายตัวข้อความ
+    // เพราะข้อความอยู่ในคอลัมน์ที่เยื้องมาจากรูปวงกลม ถ้าแปะตรงนั้นแถบจะไม่เต็มความกว้าง
+    // ไม่เข้าชุดกับบล็อกอื่นในหน้า
+    attachDescriptionUnlock(
+      document.querySelector(".detail-top-row"),
+      flow.unlock
+    );
 
   </script>
 </body>

@@ -85,15 +85,41 @@ revokeViewSession(token)      // ปิดหน้าจอ คืน session
 **ห้ามแก้ไฟล์นี้** ถ้าอยากได้ข้อมูลเพิ่มบอกพี่แบงค์ เดี๋ยวเพิ่มให้
 
 `shared/sensitive-flow.js` คือ UI ของ flow (ปุ่มปลดล็อก → ฟอร์ม PIN → แสดงภาพ)
-เขียนเป็น JS ธรรมดา ใช้ร่วมกันทั้ง `web/` และ `app/` — เรียกบรรทัดเดียวจบ
+เขียนเป็น JS ธรรมดา `app/` เรียกบรรทัดเดียวจบ
 
 ```js
-mountSensitiveFlow(document.getElementById("sensitive-slot"), {
+const flow = mountSensitiveFlow(document.getElementById("sensitive-slot"), {
   ticketId: "2026-6U23NF",
 });
+
+// ปุ่มปลดล็อกจุดที่สอง ต่อท้ายข้อความรายละเอียด
+attachDescriptionUnlock(document.querySelector(".ticket-title-row"), flow.unlock);
 ```
 
 ส่วนนี้ **ทำงานได้แล้ว ไม่ต้องแตะ** งานของคุณคือทำ *หน้าจอรอบๆ* ให้เหมือนของจริง
+
+## ข้อความและปุ่มต้องเหมือนกันทั้ง 3 หน้า
+
+`shared/sensitive-text.js` เก็บ **ข้อความทุกคำ** ของฟีเจอร์นี้ไว้ที่เดียว
+(ปุ่ม หัวข้อโมดัล ข้อความ error ป้ายจำนวนหน้า ฯลฯ)
+
+```js
+import { SENSITIVE_TEXT as T } from "../shared/sensitive-text.js";
+
+T.locked.unlockButton      // "ปลดล็อก"
+T.pin.unlock.title         // "ปลดล็อกข้อมูล Sensitive"
+T.unlocked.galleryButton(3) // "ดูภาพทั้งหมด (3)"
+```
+
+**อย่าพิมพ์คำเองในหน้าตัวเอง** ต่อให้เป็นคำเดียวกันตอนนี้ก็ตาม เพราะพอต้องแก้คำ
+จะแก้ไม่ครบแล้วเพี้ยนกันอีก — ที่ผ่านมาเป็นแบบนี้มาแล้ว (บางหน้าเรียก "PIN"
+บางหน้าเรียก "รหัสผ่าน")
+
+ปุ่มปลดล็อก · badge SENSITIVE · แถบ toolbar หลังปลดล็อก มี class กลางให้แล้วใน
+`shared/sensitive-flow.css` รายละเอียดอยู่ใน [README](../README.md#สิ่งที่ต้องเหมือนกันทั้ง-3-platform)
+
+ถ้าคิดว่าคำไหนควรเปลี่ยน **บอกก่อน อย่าแก้เฉพาะหน้าตัวเอง** — เปลี่ยนที่
+`sensitive-text.js` ครั้งเดียวแล้วเปลี่ยนพร้อมกันทั้งสามหน้า
 
 ## ส่งงานยังไง
 

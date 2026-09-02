@@ -22,6 +22,11 @@ import {
   revokeViewSession,
   unlockSensitiveCase,
 } from "./sensitive-mock.js";
+import { SENSITIVE_TEXT as T } from "./sensitive-text.js";
+
+/* ไอคอนกลาง — ปุ่มเดียวกันต้องใช้ไอคอนตัวเดียวกันทุก platform */
+export const LOCK_ICON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 9.6-1.95M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+export const GALLERY_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`;
 
 const el = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -53,14 +58,15 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     // ภาพตอนล็อกต้องเป็นภาพเดียวกันทั้ง 3 platform เปลี่ยนที่ lockedCase.censoredPhoto ที่เดียว
     const cover = el("img", "sv-locked-cover");
     cover.src = lockedCase.censoredPhoto;
-    cover.alt = "ภาพถูกปกปิดข้อมูลอ่อนไหว";
+    cover.alt = T.locked.photoAlt;
     cover.draggable = false;
 
     const overlay = el("div", "sv-locked-overlay");
-    overlay.append(el("span", "sv-locked-overlay-label", "ภาพถูกซ่อน"));
+    overlay.append(el("span", "sv-locked-overlay-label", T.locked.photoLabel));
 
-    const button = el("button", "sv-button sv-button-unlock");
-    button.innerHTML = '<i class="fa-solid fa-unlock" style="font-size: 14px;"></i> ปลดล็อก';
+    const button = el("button", "sv-unlock sv-unlock--onscrim");
+    button.type = "button";
+    button.innerHTML = `${LOCK_ICON_SVG}${T.locked.unlockButton}`;
     button.addEventListener("click", openUnlockFlow);
 
     overlay.append(button);
@@ -78,22 +84,23 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
   function showPinModal(mode, notice = "") {
     setState(`pin:${mode}`);
+    const copy = mode === "setup" ? T.pin.setup : T.pin.unlock;
     const overlay = el("div", "sv-modal-overlay");
-    
+
     const modal = el("div", "sv-pin-modal");
-    
+
     const iconWrap = el("div", "sv-pin-modal-icon");
     iconWrap.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#714727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
 
-    const title = el("h3", "sv-pin-modal-title", mode === "setup" ? "ตั้งรหัสผ่านความปลอดภัย" : "ปลดล็อกข้อมูล Sensitive");
-    const hint = el("p", "sv-pin-modal-subtitle", mode === "setup" ? "กรุณาตั้งรหัสผ่าน 6 หลักสำหรับการเข้าดูข้อมูล Sensitive" : "กรุณาใส่รหัสผ่าน 6 หลักของคุณ");
+    const title = el("h3", "sv-pin-modal-title", copy.title);
+    const hint = el("p", "sv-pin-modal-subtitle", copy.description);
 
     const form = el("div", "sv-pin-modal-form");
-    
+
+    // ติดป้ายช่องกรอกทุกโหมด ไม่ใช่เฉพาะตอนตั้ง PIN
+    // เดิมโหมด unlock ไม่มีป้าย ผู้ใช้เห็นแต่ช่องว่างไม่รู้ว่าต้องกรอกกี่หลัก
     const group1 = el("div", "sv-pin-input-group");
-    if (mode === "setup") {
-      group1.append(el("label", null, "รหัสผ่าน"));
-    }
+    group1.append(el("label", null, copy.pinLabel));
     const input1 = el("input", "sv-pin-modal-input");
     input1.type = "password";
     input1.inputMode = "numeric";
@@ -105,7 +112,7 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     let input2;
     if (mode === "setup") {
       const group2 = el("div", "sv-pin-input-group");
-      group2.append(el("label", null, "ยืนยันรหัสผ่าน"));
+      group2.append(el("label", null, T.pin.setup.confirmLabel));
       input2 = el("input", "sv-pin-modal-input");
       input2.type = "password";
       input2.inputMode = "numeric";
@@ -122,9 +129,9 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     }
 
     const actions = el("div", "sv-pin-modal-actions");
-    const cancel = el("button", "sv-pin-btn-cancel", "ยกเลิก");
-    const submit = el("button", "sv-pin-btn-submit", mode === "setup" ? "บันทึกและปลดล็อก" : "ตกลง");
-    
+    const cancel = el("button", "sv-pin-btn-cancel", T.pin.cancel);
+    const submit = el("button", "sv-pin-btn-submit", copy.submit);
+
     actions.append(cancel, submit);
     form.append(message, actions);
     
@@ -142,6 +149,7 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
       message.textContent = text;
       message.classList.remove("is-notice");
       submit.disabled = false;
+      submit.textContent = copy.submit;
       input1.value = "";
       if (input2) input2.value = "";
       input1.focus();
@@ -149,20 +157,21 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
     const handleSubmit = async () => {
       const pin = input1.value.trim();
-      if (!/^\d{6}$/.test(pin)) return fail("PIN ต้องเป็นตัวเลข 6 หลัก");
+      if (!/^\d{6}$/.test(pin)) return fail(T.pin.errors.length);
 
       if (mode === "setup") {
         const pin2 = input2.value.trim();
-        if (pin !== pin2) return fail("รหัสผ่านไม่ตรงกัน");
+        if (pin !== pin2) return fail(T.pin.errors.mismatch);
       }
 
       submit.disabled = true;
+      submit.textContent = T.pin.submitting;
       message.textContent = "";
       try {
         if (mode === "setup") {
           await createSensitivePin(pin);
           overlay.remove();
-          showPinModal("unlock", "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก");
+          showPinModal("unlock", T.pin.setupDone);
           return;
         }
         const result = await unlockSensitiveCase(ticketId, pin);
@@ -201,17 +210,18 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
   async function renderUnlocked() {
     setState("loading");
-    render(el("div", "sv-loading", "กำลังสร้างภาพรายละเอียด..."));
+    render(el("div", "sv-loading", T.unlocked.loading));
 
     let content;
     try {
       content = await getRenderedContent(ticketId);
     } catch {
       setState("error");
-      const retry = el("button", "sv-button", "ลองอีกครั้ง");
+      const retry = el("button", "sv-unlock sv-unlock--solid", T.unlocked.retry);
+      retry.type = "button";
       retry.addEventListener("click", renderLocked);
-      const wrap = el("div", "sv-locked");
-      wrap.append(el("p", "sv-note", "สร้างภาพไม่สำเร็จ กรุณาปลดล็อกใหม่อีกครั้ง"), retry);
+      const wrap = el("div", "sv-render-error");
+      wrap.append(el("p", "sv-note", T.unlocked.renderFailed), retry);
       render(wrap);
       return;
     }
@@ -219,20 +229,25 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     setState("unlocked");
     const wrap = el("div", "sv-unlocked");
 
-    const header = el("div", "sv-unlocked-header");
-    
-    const titleWrap = el("div", "sv-unlocked-title-wrap");
-    titleWrap.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#714727" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> <span class="sv-unlocked-title-text">ข้อมูล Sensitive</span>`;
-    
-    const galleryBtn = el("button", "sv-unlocked-gallery-btn");
-    galleryBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> ดูภาพทั้งหมด`;
+    // แถบหัวการ์ดแบบเดียวกับ LIFF และ web — [SENSITIVE] [n หน้า] ... [ดูภาพทั้งหมด (n)]
+    // เดิม app ใช้หัวข้อ "ข้อมูล Sensitive" กับปุ่มที่ไม่บอกจำนวนภาพ ทำให้ไม่ตรงกับอีกสองหน้า
+    const header = el("div", "sv-rendered-toolbar");
+
+    const badges = el("div", "sv-rendered-badges");
+    badges.append(
+      el("span", "sv-security-badge", T.unlocked.badge),
+      el("span", "sv-page-count", T.unlocked.pageCount(content.pages.length))
+    );
+
+    const galleryBtn = el("button", "sv-gallery-btn");
+    galleryBtn.type = "button";
+    galleryBtn.innerHTML = `${GALLERY_ICON_SVG}${T.unlocked.galleryButton(content.media.length)}`;
+    galleryBtn.disabled = !content.media?.length;
     galleryBtn.addEventListener("click", () => {
-       if (content.media && content.media.length > 0) {
-           openLightbox(content.media, 0);
-       }
+      if (content.media?.length) openLightbox(content.media, 0);
     });
 
-    header.append(titleWrap, galleryBtn);
+    header.append(badges, galleryBtn);
 
     const pages = el("div", "sv-pages-new");
     content.pages.forEach((url, index) => {
@@ -245,25 +260,39 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
       pages.append(figure);
     });
 
-    wrap.append(header, pages);
+    // ห่อ toolbar + หน้าไว้ในการ์ดใบเดียวเหมือน .sensitive-rendered-card ของ LIFF
+    // เพื่อให้โครงหลังปลดล็อกเป็นก้อนเดียวกันทั้งสามหน้า
+    const card = el("section", "sv-rendered-card");
+    card.append(header, pages);
+    wrap.append(card);
     render(wrap);
   }
 
   function openLightbox(mediaArray, startIndex = 0) {
     const overlay = el("div", "sv-lightbox");
     
-    // Header section
+    // หัวแกลเลอรีต้องมีของ 3 อย่างเหมือนกันทั้งสามหน้า: ชื่อภาพ · ลำดับ n/m · ปุ่มปิด
+    // เดิม app มีแต่ n/m ไม่มีชื่อภาพ (ชื่ออยู่ใต้ภาพแทน) ผู้ใช้เลยอ่านคนละที่กับอีกสองหน้า
     const header = el("div", "sv-lightbox-header");
-    const counter = el("span", "sv-lightbox__counter", `${startIndex + 1} / ${mediaArray.length}`);
+    const heading = el("div", "sv-lightbox__heading");
+    const label = el("strong", "sv-lightbox__title", mediaArray[startIndex]?.label || T.gallery.untitled);
+    const counter = el("span", "sv-lightbox__counter", T.gallery.counter(startIndex, mediaArray.length));
+    heading.append(label, counter);
     const close = el("button", "sv-lightbox__close", "×");
-    header.append(counter, close);
-    
+    close.type = "button";
+    close.setAttribute("aria-label", T.gallery.close);
+    header.append(heading, close);
+
     const track = el("div", "sv-lightbox-track");
-    
-    // Add Next/Prev buttons for desktop testing support
-    const prevBtn = el("button", "sv-lightbox-nav prev", "❮");
-    const nextBtn = el("button", "sv-lightbox-nav next", "❯");
-    
+
+    // ปุ่มลูกศรมีไว้ให้กดบนจอใหญ่ ส่วนบนมือถือยังปัดได้ตามปกติ (scroll-snap)
+    const prevBtn = el("button", "sv-lightbox-nav prev", "‹");
+    const nextBtn = el("button", "sv-lightbox-nav next", "›");
+    prevBtn.type = "button";
+    nextBtn.type = "button";
+    prevBtn.setAttribute("aria-label", T.gallery.previous);
+    nextBtn.setAttribute("aria-label", T.gallery.next);
+
     prevBtn.addEventListener("click", () => {
       track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
     });
@@ -275,10 +304,9 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
       const slide = el("div", "sv-lightbox-slide");
       const image = el("img", null);
       image.src = item.url;
-      image.alt = item.label || "รูปภาพปัญหา";
-      
-      const caption = el("div", "sv-lightbox__label", item.label || "ไม่มีชื่อภาพ");
-      slide.append(image, caption);
+      image.alt = item.label || T.gallery.untitled;
+      image.draggable = false;
+      slide.append(image);
       track.append(slide);
     });
 
@@ -292,8 +320,9 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
       const slideWidth = track.clientWidth;
       if (slideWidth > 0) {
         const currentIndex = Math.round(track.scrollLeft / slideWidth);
-        counter.textContent = `${currentIndex + 1} / ${mediaArray.length}`;
-        
+        counter.textContent = T.gallery.counter(currentIndex, mediaArray.length);
+        label.textContent = mediaArray[currentIndex]?.label || T.gallery.untitled;
+
         // Hide/Show buttons
         prevBtn.style.display = currentIndex === 0 ? "none" : "flex";
         nextBtn.style.display = currentIndex === mediaArray.length - 1 ? "none" : "flex";
@@ -319,5 +348,35 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
   return {
     reset: renderLocked,
     getState: () => state,
+    // เปิด flow ปลดล็อกจากข้างนอกได้ — shell เอาไปผูกกับปุ่มปลดล็อกที่อยู่ท้ายข้อความ
+    // รายละเอียด ซึ่งวาดอยู่นอก container ของ flow
+    unlock: openUnlockFlow,
   };
+}
+
+/**
+ * ปุ่มปลดล็อกที่ต่อท้ายข้อความรายละเอียด
+ *
+ * ผู้ใช้ที่สนใจ "ข้อความ" มากกว่า "ภาพ" จะได้ไม่ต้องไปหาปุ่มที่มุมภาพ
+ * shell ไหนก็เรียกได้ ขอแค่มี element ของข้อความรายละเอียดให้ต่อท้าย
+ */
+export function attachDescriptionUnlock(afterNode, onUnlock) {
+  if (!afterNode) return null;
+
+  const row = document.createElement("div");
+  row.className = "sv-desc-unlock";
+
+  const hint = document.createElement("span");
+  hint.className = "sv-desc-unlock__hint";
+  hint.textContent = T.locked.descriptionHint;
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "sv-unlock sv-unlock--solid";
+  button.innerHTML = `${LOCK_ICON_SVG}${T.locked.unlockButton}`;
+  button.addEventListener("click", onUnlock);
+
+  row.append(hint, button);
+  afterNode.insertAdjacentElement("afterend", row);
+  return row;
 }

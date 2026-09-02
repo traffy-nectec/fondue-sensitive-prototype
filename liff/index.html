@@ -8,6 +8,9 @@
 <!-- CSS ตัวนี้คือของจริง compile จาก sensitive.scss + Detail.scss ของ fondue-liff-my-case
      markup ข้างล่างเขียนมือให้ตรงกับ Detail.jsx / SensitiveCaseView.jsx -->
 <link rel="stylesheet" href="./assets/liff-real.css">
+<!-- ชิ้นส่วนกลางที่ทั้ง 3 platform ใช้หน้าตาเดียวกัน (ปุ่มปลดล็อก · แถบ toolbar หลังปลดล็อก)
+     โหลดทีหลัง liff-real.css เพื่อให้ทับของเดิมได้ -->
+<link rel="stylesheet" href="../shared/sensitive-flow.css?v=4">
 <style>
   html, body { margin: 0; background: #f5f5f5; }
   body { font-family: "IBM Plex Sans Thai", sans-serif; }
@@ -29,38 +32,45 @@
     font-size: 14px;
     font-weight: 700;
   }
-  .sensitive-image-lock-overlay .sensitive-toolbar-unlock {
-    min-height: 36px;
-    padding: 7px 12px;
-    background: #fff;
-    color: #57351f;
+  /* ปุ่มปลดล็อก · แถบ toolbar หลังปลดล็อก · badge ย้ายไปอยู่ใน shared/sensitive-flow.css
+     แล้ว (.sv-unlock, .sv-rendered-toolbar, .sv-security-badge, .sv-page-count,
+     .sv-gallery-btn) เพื่อให้ทั้ง 3 platform ใช้ค่าชุดเดียวกัน */
+
+  /* แถวปุ่มในโมดัล PIN — เพิ่มปุ่มยกเลิกให้ตรงกับ web และ app */
+  .sensitive-pin-actions {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 8px;
   }
-  .sensitive-rendered-toolbar {
+  /* ต้องเจาะจงถึง `.sensitive-pin-modal form` ให้ชนะกฎของจริงที่ตั้ง
+     `.sensitive-pin-modal form .sensitive-primary-button{margin-top:20px}` ไว้
+     ถ้าไม่ล้าง margin นั้น ปุ่มปลดล็อกจะดันความสูงแถวเป็น 68px
+     แล้วปุ่มยกเลิกยืดตาม กลายเป็นสูงไม่เท่ากัน */
+  .sensitive-pin-modal form .sensitive-pin-actions .sensitive-primary-button,
+  .sensitive-pin-modal form .sensitive-pin-actions .sensitive-secondary-button {
+    flex: 1;
+    margin-top: 0;
+  }
+  /* ต้องตรงกับ .sensitive-primary-button ของจริงทุกค่า (min-height 48 / font 16 / radius 10)
+     ไม่งั้นปุ่มสองอันในแถวเดียวกันสูงไม่เท่ากัน */
+  .sensitive-secondary-button {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 10px 12px;
-    border-bottom: 1px solid #dfc8b5;
-    background: #fffaf6;
-  }
-  .sensitive-rendered-badges { display: flex; align-items: center; gap: 6px; }
-  .sensitive-page-count {
-    padding: 3px 8px;
-    border-radius: 999px;
-    color: #fff;
-    background: #6b625d;
-    font-size: 12px;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 16px;
+    border: 1px solid #e2d5c9;
+    border-radius: 10px;
+    background: #fff;
+    color: #6b625d;
+    font-family: inherit;
+    font-size: 16px;
     font-weight: 700;
-  }
-  .sensitive-compact-gallery-button {
-    min-height: 34px;
-    padding: 6px 10px;
-    border: 0;
-    border-radius: 999px;
-    color: #fff;
-    background: #714727;
-    font: 700 12px "IBM Plex Sans Thai", sans-serif;
+    /* ฟอนต์ IBM Plex Sans Thai มี line box สูงมากถ้าปล่อย normal (~46px ที่ 16px)
+       ปุ่มจะสูงเกิน 48px ไปเอง แล้วไม่เท่ากับปุ่มปลดล็อก จึงตรึงไว้ที่ 1 */
+    line-height: 1;
+    cursor: pointer;
   }
 </style>
 </head>

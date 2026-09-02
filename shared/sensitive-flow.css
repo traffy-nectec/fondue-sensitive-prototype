@@ -4,7 +4,9 @@
 .sv-root,
 .sv-modal-overlay {
   --sv-accent: #714727;
-  --sv-accent-soft: #f4e8dd;
+  /* ตรงกับ .sensitive-security-badge ของ LIFF ที่ compile จาก sensitive.scss จริง
+     เดิมตรงนี้เป็น #f4e8dd ทำให้ badge ของ app อ่อนกว่าของ LIFF นิดหน่อย */
+  --sv-accent-soft: #f1dfcf;
   --sv-text: #2f241e;
   --sv-muted: #786a61;
   --sv-line: #ead8c9;
@@ -504,4 +506,194 @@
   border: 0;
   -webkit-user-select: none;
   user-select: none;
+}
+
+/* ============================================================================
+ * ชิ้นส่วนกลางที่ทั้ง 3 platform ต้องหน้าตาเหมือนกัน
+ *
+ * เพิ่มรอบนี้เพราะรีวิวแล้วพบว่าปุ่มปลดล็อกกับแถบ toolbar หลังปลดล็อก
+ * หน้าตาไม่ตรงกันสักหน้า แต่ละหน้าเขียนเองหมด
+ * ใครเอาไปทำต่อ ลอก *ค่าสี ขนาด และลำดับของชิ้นส่วน* ในบล็อกนี้ไป
+ * ไม่ต้องลอก class name (React / React Native เรียกชื่ออะไรก็ได้)
+ * ========================================================================= */
+
+:root {
+  --sv-accent: #714727;        /* น้ำตาลแบรนด์ ใช้กับทุกอย่างที่เป็นของ sensitive */
+  --sv-accent-soft: #f1dfcf;   /* พื้นอ่อนของ badge */
+  --sv-scrim: rgba(32, 24, 19, .82);
+}
+
+/* ---------- ปุ่มปลดล็อก ----------
+ * มี 2 แบบเท่านั้น อย่าสร้างแบบที่ 3
+ *
+ *   .sv-unlock--solid  ปุ่มบนพื้นขาว (ท้ายข้อความรายละเอียด) = น้ำตาลทึบ ตัวอักษรขาว
+ *   .sv-unlock--onscrim ปุ่มบนแถบดำทับภาพ                     = พื้นขาว ตัวอักษรน้ำตาล
+ *
+ * ที่ต้องมี 2 แบบเพราะปุ่มบนภาพวางอยู่บนแถบสีเข้ม ถ้าใช้น้ำตาลทึบจะจมหายไปกับพื้น
+ * นอกนั้น (ไอคอนกุญแจ ข้อความ "ปลดล็อก" ความโค้ง ขนาดตัวอักษร) เหมือนกันทุกอย่าง
+ * ผู้ใช้จึงอ่านออกว่าเป็นปุ่มเดียวกัน */
+.sv-unlock {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sv-unlock:disabled { opacity: .6; cursor: default; }
+.sv-unlock--solid { background: var(--sv-accent); color: #fff; }
+.sv-unlock--solid:hover { opacity: .9; }
+.sv-unlock--onscrim { background: #fff; color: var(--sv-accent); }
+.sv-unlock--onscrim:hover { background: #f6efe9; }
+
+/* แถวปุ่มปลดล็อกที่ต่อท้ายข้อความรายละเอียด
+ * ผู้ใช้ที่สนใจ "ข้อความ" ไม่ใช่ "ภาพ" จะได้ไม่ต้องไปหาปุ่มที่มุมภาพ
+ *
+ * ทำเป็นแถบครีมเต็มความกว้าง ไม่ใช่ปุ่มลอยๆ ข้างข้อความ
+ * เพราะ LIFF วางเนื้อหาเป็นบล็อกพื้นอ่อนมุมมน 8px เรียงกันลงมาทั้งหน้า
+ * (แถบเขียว "แจ้งเมื่อ" แถบเหลือง "กำลังดำเนินการ") ปุ่มน้ำตาลทึบลอยอยู่เฉยๆ
+ * เลยดูเหมือนของแปลกปลอมที่แปะเพิ่มเข้าไป
+ * ทำแบบนี้เหมือนกันทั้งสามหน้า ไม่ได้แยกทำเฉพาะ LIFF */
+.sv-desc-unlock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #eadfd3;
+  border-radius: 8px;
+  background: #f8f2ec;
+}
+
+.sv-desc-unlock__hint {
+  color: #7d6d61;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ---------- แถบหัวของการ์ดหลังปลดล็อก ----------
+ * รูปแบบเดียวกันทั้ง 3 platform:  [SENSITIVE] [n หน้า] ......... [ดูภาพทั้งหมด (n)]
+ * ต้องอยู่ *ในการ์ด* ไม่ใช่ใน header ของหน้า เพราะเวลาเอาไปแปะใน citydata /
+ * FondueManager จริง จะได้ไม่ต้องไปยุ่งกับ chrome ของหน้าเจ้าภาพ */
+.sv-rendered-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #dfc8b5;
+  background: #fffaf6;
+}
+
+.sv-rendered-badges { display: flex; align-items: center; gap: 6px; }
+
+/* SENSITIVE เคยเป็นสีแดงในหน้า web อย่างเดียว เปลี่ยนมาใช้น้ำตาลแบรนด์ให้ตรงกัน
+ * สีแดงในระบบเราหมายถึง "ผิดพลาด/เร่งด่วน" ซึ่งไม่ใช่ความหมายของธงนี้ */
+.sv-security-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: var(--sv-accent);
+  background: var(--sv-accent-soft);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.sv-page-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: #6b625d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sv-gallery-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--sv-accent);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sv-gallery-btn:hover { opacity: .9; }
+
+/* ---------- สถานะ render ไม่สำเร็จ ----------
+ * เดิมมีแต่ใน app หน้าอื่นค้างอยู่ที่ spinner ตลอดไปถ้า render ล้ม */
+.sv-render-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  color: #786a61;
+  font-size: 14px;
+}
+
+/* การ์ดรวมของหน้าที่ปลดล็อกแล้ว — โครงเดียวกับ .sensitive-rendered-card ของ LIFF */
+.sv-rendered-card {
+  overflow: hidden;
+  border: 1px solid #dfc8b5;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(72, 48, 30, .07);
+}
+
+/* หน้าที่อยู่ในการ์ดไม่ต้องมีกรอบของตัวเองแล้ว ใช้เส้นคั่นแทนเหมือน LIFF */
+.sv-rendered-card .sv-pages-new { gap: 0; }
+.sv-rendered-card .sv-page-card {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.sv-rendered-card .sv-page-card + .sv-page-card { border-top: 8px solid #eee8e3; }
+
+/* หัวแกลเลอรี: ชื่อภาพ + ลำดับ อยู่ชิดซ้าย ปุ่มปิดชิดขวา (เหมือน LIFF และ web) */
+.sv-lightbox__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.sv-lightbox__title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sv-lightbox__counter {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .75);
 }

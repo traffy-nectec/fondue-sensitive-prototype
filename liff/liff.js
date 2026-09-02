@@ -19,24 +19,15 @@ import {
   revokeViewSession,
   unlockSensitiveCase,
 } from "../shared/sensitive-mock.js";
+import { SENSITIVE_TEXT as T } from "../shared/sensitive-text.js";
+import { GALLERY_ICON_SVG, LOCK_ICON_SVG } from "../shared/sensitive-flow.js?v=4";
 
 const root = document.getElementById("root");
 
-const LOCK_ICON = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 9.6-1.95M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const PIN_ICON = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-const MODE_CONTENT = {
-  setup: {
-    title: "ตั้ง PIN สำหรับข้อมูล Sensitive",
-    description: "PIN นี้ใช้สำหรับเปิดดูข้อมูล Sensitive ในเรื่องแจ้งของคุณ",
-    submitLabel: "ตั้ง PIN",
-  },
-  unlock: {
-    title: "ปลดล็อกข้อมูล Sensitive",
-    description: "กรอก PIN 6 หลักเพื่อดูรายละเอียดเรื่องแจ้ง",
-    submitLabel: "ปลดล็อก",
-  },
-};
+// ข้อความทั้งหมดมาจาก shared/sensitive-text.js — อย่าเขียนคำทับในไฟล์นี้
+const MODE_CONTENT = { setup: T.pin.setup, unlock: T.pin.unlock };
 
 let viewToken = "";
 
@@ -49,11 +40,11 @@ function lockedMarkup() {
         <div class="before-image-container">
           <div class="before-text-container"><span class="before-text">แจ้ง</span></div>
           <img class="before-image" src="${lockedCase.censoredPhoto}"
-               alt="ภาพที่ปิดข้อมูล Sensitive แล้ว" draggable="false">
+               alt="${T.locked.photoAlt}" draggable="false">
           <div class="sensitive-image-lock-overlay">
-            <span>ภาพถูกซ่อน</span>
-            <button type="button" class="sensitive-toolbar-unlock" id="unlock-button">
-              ${LOCK_ICON}ปลดล็อก
+            <span>${T.locked.photoLabel}</span>
+            <button type="button" class="sv-unlock sv-unlock--onscrim" id="unlock-button">
+              ${LOCK_ICON_SVG}${T.locked.unlockButton}
             </button>
           </div>
         </div>
@@ -65,6 +56,15 @@ function lockedMarkup() {
           <span class="report-timestamp-text">${lockedCase.reportedAt}</span>
         </div>
         <span class="report-content-detail-container">${lockedCase.censoredDescription}</span>
+
+        <!-- ปุ่มปลดล็อกจุดที่สอง ต่อท้ายข้อความรายละเอียด
+             ผู้แจ้งที่อยากอ่านข้อความเต็มจะได้ไม่ต้องเลื่อนกลับขึ้นไปหาปุ่มบนภาพ -->
+        <div class="sv-desc-unlock">
+          <span class="sv-desc-unlock__hint">${T.locked.descriptionHint}</span>
+          <button type="button" class="sv-unlock sv-unlock--solid" id="unlock-button-description">
+            ${LOCK_ICON_SVG}${T.locked.unlockButton}
+          </button>
+        </div>
 
         <div class="current-header-detail-container" style="border:1px solid #f6d99a;background:#fdf3d4">
           <span class="current-status-text">${lockedCase.status}&nbsp;</span>
@@ -141,19 +141,24 @@ function formatElapsed(updatedOn) {
 
 function renderLocked() {
   root.innerHTML = lockedMarkup();
+  // ปุ่มปลดล็อกทั้งสองจุดเรียก flow เดียวกัน
   document
     .getElementById("unlock-button")
     .addEventListener("click", openUnlockFlow);
+  document
+    .getElementById("unlock-button-description")
+    .addEventListener("click", openUnlockFlow);
 }
 
-async function openUnlockFlow() {
-  const button = document.getElementById("unlock-button");
+async function openUnlockFlow(event) {
+  const button = event.currentTarget;
+  const original = button.innerHTML;
   button.disabled = true;
-  button.innerHTML = `${LOCK_ICON}กำลังตรวจสอบ...`;
+  button.innerHTML = `${LOCK_ICON_SVG}${T.locked.checking}`;
   const status = await getCredentialStatus();
   openPinModal(status.hasPin ? "unlock" : "setup");
   button.disabled = false;
-  button.innerHTML = `${LOCK_ICON}ปลดล็อก`;
+  button.innerHTML = original;
 }
 
 /* ---------- modal ใส่ PIN ---------- */
@@ -179,16 +184,21 @@ function openPinModal(mode, notice = "") {
   backdrop.className = "sensitive-modal-backdrop";
   backdrop.innerHTML = `
     <div class="sensitive-pin-modal" role="dialog" aria-modal="true">
-      <button type="button" class="sensitive-modal-close" aria-label="ปิด">×</button>
+      <button type="button" class="sensitive-modal-close" aria-label="${T.pin.closeLabel}">×</button>
       <div class="sensitive-pin-icon" aria-hidden="true">${PIN_ICON}</div>
       <h2>${content.title}</h2>
       <p class="sensitive-pin-description">${content.description}</p>
       ${notice ? `<div class="sensitive-pin-notice">${notice}</div>` : ""}
       <form>
-        ${pinFieldMarkup("sensitive-pin", "PIN 6 หลัก")}
-        ${needsConfirm ? pinFieldMarkup("sensitive-confirm-pin", "ยืนยัน PIN") : ""}
+        ${pinFieldMarkup("sensitive-pin", content.pinLabel)}
+        ${needsConfirm ? pinFieldMarkup("sensitive-confirm-pin", T.pin.setup.confirmLabel) : ""}
         <div class="sensitive-pin-error" role="alert" hidden></div>
-        <button type="submit" class="sensitive-primary-button">${content.submitLabel}</button>
+        <!-- เพิ่มปุ่มยกเลิกให้ตรงกับ web และ app เดิมมีแต่ปุ่ม × มุมบน
+             ซึ่งบนมือถือกดยากและผู้ใช้มักไม่เห็น -->
+        <div class="sensitive-pin-actions">
+          <button type="button" class="sensitive-secondary-button sensitive-modal-cancel">${T.pin.cancel}</button>
+          <button type="submit" class="sensitive-primary-button">${content.submit}</button>
+        </div>
       </form>
     </div>
   `;
@@ -218,28 +228,30 @@ function openPinModal(mode, notice = "") {
     errorBox.hidden = false;
   };
 
-  backdrop.querySelector(".sensitive-modal-close").addEventListener("click", close);
+  backdrop
+    .querySelectorAll(".sensitive-modal-close, .sensitive-modal-cancel")
+    .forEach((button) => button.addEventListener("click", close));
   backdrop.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     errorBox.hidden = true;
 
     const pin = backdrop.querySelector("#sensitive-pin").value;
-    if (pin.length !== 6) return showError("กรุณากรอก PIN เป็นตัวเลข 6 หลัก");
+    if (!/^\d{6}$/.test(pin)) return showError(T.pin.errors.length);
 
     if (needsConfirm) {
       const confirmPin = backdrop.querySelector("#sensitive-confirm-pin").value;
-      if (pin !== confirmPin) return showError("PIN และยืนยัน PIN ไม่ตรงกัน");
+      if (pin !== confirmPin) return showError(T.pin.errors.mismatch);
     }
 
     const submit = backdrop.querySelector(".sensitive-primary-button");
     submit.disabled = true;
-    submit.textContent = "กำลังดำเนินการ...";
+    submit.textContent = T.pin.submitting;
 
     try {
       if (mode === "setup") {
         await createSensitivePin(pin);
         close();
-        openPinModal("unlock", "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก");
+        openPinModal("unlock", T.pin.setupDone);
         return;
       }
 
@@ -249,11 +261,11 @@ function openPinModal(mode, notice = "") {
       await renderUnlocked();
     } catch (error) {
       submit.disabled = false;
-      submit.textContent = content.submitLabel;
+      submit.textContent = content.submit;
       showError(
         error.code === "INVALID_PIN" && error.attemptsRemaining != null
           ? `${error.message} (เหลืออีก ${error.attemptsRemaining} ครั้ง)`
-          : error.message
+          : error.message || T.pin.errors.generic
       );
     }
   });
@@ -268,23 +280,38 @@ async function renderUnlocked() {
     <main class="sensitive-case-view with-actions">
       <div class="sensitive-loading-card">
         <div class="sensitive-spinner"></div>
-        <span>กำลังโหลดข้อมูล Sensitive</span>
+        <span>${T.unlocked.loading}</span>
       </div>
     </main>
   `;
 
-  const content = await getRenderedContent(lockedCase.ticketId);
+  let content;
+  try {
+    content = await getRenderedContent(lockedCase.ticketId);
+  } catch {
+    // เดิมหน้านี้ไม่มี state นี้ ถ้า render ล้มจะค้างที่ spinner ตลอดไป
+    root.innerHTML = `
+      <main class="sensitive-case-view with-actions">
+        <div class="sv-render-error">
+          <p style="margin:0">${T.unlocked.renderFailed}</p>
+          <button type="button" class="sv-unlock sv-unlock--solid" id="render-retry">${T.unlocked.retry}</button>
+        </div>
+      </main>
+    `;
+    document.getElementById("render-retry").addEventListener("click", renderLocked);
+    return;
+  }
 
   root.innerHTML = `
     <main class="sensitive-case-view with-actions">
       <section class="sensitive-rendered-card">
-        <div class="sensitive-rendered-toolbar">
-          <div class="sensitive-rendered-badges">
-            <span class="sensitive-security-badge">SENSITIVE</span>
-            <span class="sensitive-page-count">${content.pages.length} หน้า</span>
+        <div class="sv-rendered-toolbar">
+          <div class="sv-rendered-badges">
+            <span class="sv-security-badge">${T.unlocked.badge}</span>
+            <span class="sv-page-count">${T.unlocked.pageCount(content.pages.length)}</span>
           </div>
-          <button type="button" class="sensitive-compact-gallery-button" id="open-gallery">
-            ▣ ดูภาพทั้งหมด (${content.media.length})
+          <button type="button" class="sv-gallery-btn" id="open-gallery">
+            ${GALLERY_ICON_SVG}${T.unlocked.galleryButton(content.media.length)}
           </button>
         </div>
         ${content.pages
@@ -319,15 +346,15 @@ function openGallery(media) {
     backdrop.innerHTML = `
       <div class="sensitive-gallery-toolbar">
         <div>
-          <strong>${current.label}</strong>
-          <span>${index + 1} / ${media.length}</span>
+          <strong>${current.label || T.gallery.untitled}</strong>
+          <span>${T.gallery.counter(index, media.length)}</span>
         </div>
-        <button type="button" aria-label="ปิดภาพเต็ม">×</button>
+        <button type="button" aria-label="${T.gallery.close}">×</button>
       </div>
       <div class="sensitive-gallery-content">
-        ${media.length > 1 ? '<button type="button" class="sensitive-gallery-navigation previous" aria-label="ภาพก่อนหน้า">‹</button>' : ""}
-        <img src="${current.url}" alt="${current.label}" draggable="false">
-        ${media.length > 1 ? '<button type="button" class="sensitive-gallery-navigation next" aria-label="ภาพถัดไป">›</button>' : ""}
+        ${media.length > 1 ? `<button type="button" class="sensitive-gallery-navigation previous" aria-label="${T.gallery.previous}">‹</button>` : ""}
+        <img src="${current.url}" alt="${current.label || T.gallery.untitled}" draggable="false">
+        ${media.length > 1 ? `<button type="button" class="sensitive-gallery-navigation next" aria-label="${T.gallery.next}">›</button>` : ""}
       </div>
     `;
 
