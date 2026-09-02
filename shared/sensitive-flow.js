@@ -18,6 +18,7 @@ import {
   createSensitivePin,
   getCredentialStatus,
   getRenderedContent,
+  lockedCase,
   revokeViewSession,
   unlockSensitiveCase,
 } from "./sensitive-mock.js";
@@ -48,20 +49,17 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     setState("locked");
     const wrap = el("div", "sv-locked sv-locked-new");
 
-    const iconWrap = el("div", "sv-locked-icon-wrap");
-    iconWrap.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="#EF4444"/>
-      <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
-
-    const title = el("div", "sv-locked-title", "รูปภาพถูกบล็อกโดย AI");
-    const subtitle = el("div", "sv-locked-subtitle", "อาจมีเนื้อหา Sensitive / PDPA");
+    // ภาพตอนล็อกต้องเป็นภาพเดียวกันทั้ง 3 platform เปลี่ยนที่ lockedCase.censoredPhoto ที่เดียว
+    const cover = el("img", "sv-locked-cover");
+    cover.src = lockedCase.censoredPhoto;
+    cover.alt = "ภาพถูกปกปิดข้อมูลอ่อนไหว";
+    cover.draggable = false;
 
     const button = el("button", "sv-button sv-button-unlock");
     button.innerHTML = '<i class="fa-solid fa-unlock" style="font-size: 14px;"></i> ปลดล็อกเพื่อดูรูปภาพ';
     button.addEventListener("click", openUnlockFlow);
 
-    wrap.append(iconWrap, title, subtitle, button);
+    wrap.append(cover, button);
     render(wrap);
   }
 
@@ -314,6 +312,7 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
   return {
     reset: renderLocked,
+    openUnlock: openUnlockFlow,
     getState: () => state,
   };
 }

@@ -15,6 +15,7 @@ import {
   getCredentialStatus,
   getRenderedContent,
   lockedCase,
+  lockedTimeline,
   revokeViewSession,
   unlockSensitiveCase,
 } from "../shared/sensitive-mock.js";
@@ -82,6 +83,11 @@ function lockedMarkup() {
         </div>
       </div>
 
+      <div class="content-detail-container">
+        <span class="report-content-detail-container" style="font-weight:700">การดำเนินงาน</span>
+        ${lockedTimelineMarkup()}
+      </div>
+
       <div class="extra-detail-container">
         <div class="ticket-id-container">
           <img class="verified-image" src="./assets/verified-Da4awtgz.png" alt="">
@@ -97,6 +103,34 @@ function lockedMarkup() {
       </div>
     </main>
   `;
+}
+
+/**
+ * ไทม์ไลน์ตอนยังล็อก — API ส่งรายการมาครบ ตัดแค่ข้อความกับภาพ
+ * ผู้แจ้งจึงยังเห็นว่าเรื่องเดินไปถึงไหนแล้ว
+ */
+function lockedTimelineMarkup() {
+  return lockedTimeline
+    .map((item, index) => {
+      const state = item.tl_state_name === "ส่งต่อ" ? "forward" : "inprogress";
+      const isLast = index === lockedTimeline.length - 1;
+
+      return `
+        <div class="timeline-flex">
+          <div class="timeline-box"${index === 0 ? ' style="border-left:0"' : ""}>
+            <span class="timeline-step-icon color-state-${state}"></span>
+          </div>
+          <div class="timeline-content">
+            <div>
+              <span class="${isLast ? "bold-timeline-text" : "regular-timeline-text"}">${item.tl_state_name}&nbsp;</span>
+              <span class="timestamp-timeline-text">${item.updated_on} น.</span>
+            </div>
+            <span class="org-manage-text">โดย ${item.group_name || item.first_name}</span>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 }
 
 function renderLocked() {
@@ -237,7 +271,7 @@ async function renderUnlocked() {
 
   root.innerHTML = `
     <main class="sensitive-case-view with-actions">
-      <section class="sensitive-unlocked-heading">
+      <section class="sensitive-unlocked-heading" id="unlocked-banner">
         <div>
           <span class="sensitive-security-badge">ปลดล็อกแล้ว</span>
           <h1>รายละเอียดเรื่องแจ้ง</h1>
@@ -272,6 +306,20 @@ async function renderUnlocked() {
   document
     .getElementById("open-gallery")
     .addEventListener("click", () => openGallery(content.media));
+
+  // แจ้งว่าปลดล็อกสำเร็จแล้วค่อยหายไปเอง ไม่ต้องกินพื้นที่ถาวร
+  // เพราะภาพที่แสดงอยู่ก็บอกอยู่แล้วว่าปลดล็อกได้
+  const banner = document.getElementById("unlocked-banner");
+  if (banner) {
+    banner.style.transition = "opacity .4s ease, max-height .4s ease, margin .4s ease";
+    setTimeout(() => {
+      banner.style.opacity = "0";
+      banner.style.maxHeight = "0";
+      banner.style.margin = "0";
+      banner.style.overflow = "hidden";
+      setTimeout(() => banner.remove(), 450);
+    }, 2600);
+  }
 }
 
 /* ---------- แกลเลอรีภาพเต็ม ---------- */

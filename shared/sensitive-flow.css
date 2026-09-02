@@ -473,3 +473,15 @@
 .sv-pin-btn-submit:disabled {
   opacity: 0.6;
 }
+
+/* ภาพตอนล็อก ใช้รูปเดียวกันทั้ง 3 platform */
+.sv-locked-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--sv-radius);
+  border: 1px solid var(--sv-line);
+  -webkit-user-select: none;
+  user-select: none;
+}

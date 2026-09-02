@@ -123,17 +123,45 @@ export async function revokeViewSession() {
   return { success: true };
 }
 
-/** ข้อมูลเรื่องแจ้งฉบับที่ยังไม่ปลดล็อก — ทุกฝั่งเห็นเหมือนกัน */
+/**
+ * เรื่องแจ้งฉบับที่ยังไม่ปลดล็อก — ทุก platform ต้องแสดงเหมือนกัน
+ *
+ * อิงจากเคสจริง 2026-62CT43 ที่เราใช้ทดสอบ render
+ */
 export const lockedCase = {
-  ticketId: "2026-6U23NF",
+  ticketId: "2026-62CT43",
   status: "กำลังดำเนินการ",
-  category: "ทางเท้า",
+  category: "อื่นๆ",
   org: "Traffy @ ITS Lab2",
-  reportedAt: "20 ส.ค. 69 14:20",
-  updatedAt: "21 ส.ค. 69 11:30",
+  reportedAt: "11 ส.ค. 69 10:01",
+  updatedAt: "31 ส.ค. 69 16:07",
   securityLevel: 1,
+  isSensitive: true,
   censoredDescription:
-    "ผู้แจ้งชื่อ ***** แจ้งเหตุบริเวณ ***** กรุณาติดต่อกลับที่หมายเลข *****",
-  censoredAddress: "*****",
+    "ผู้แจ้งชื่อ *** แจ้งเหตุบริเวณ *** กรุณาติดต่อกลับที่หมายเลข ***",
+  censoredAddress: "แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพมหานคร",
   censoredPhoto: assetUrl("redacted-image.svg"),
 };
+
+/**
+ * ไทม์ไลน์ตอนที่ยังล็อกอยู่
+ *
+ * API ส่งไทม์ไลน์มาครบทุกรายการตามปกติ ตัดเฉพาะเนื้อหา — `note` เป็นค่าว่าง
+ * และ `photo` เป็นภาพแทน ส่วนสถานะ เวลา หน่วยงาน ผู้ดำเนินการ ยังส่งมาเหมือนเดิม
+ * ผู้ดูจึงยังรู้ว่าเรื่องคืบหน้าถึงไหน
+ *
+ * รูปร่างตรงกับที่ get_case ส่งจริงหลังแก้ใน fondue-cases-api-php-cloudrun
+ * ข้อมูลอิงจากเคสจริง 2026-62CT43
+ */
+export const lockedTimeline = [
+  { updated_on: "2026-08-11 10:01", tl_state_name: "รอรับเรื่อง",      first_name: "ผู้แจ้ง",      group_name: null,               note: "", photo: assetUrl("redacted-image.svg") },
+  { updated_on: "2026-08-13 10:28", tl_state_name: "รับเรื่อง",        first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-13 10:29", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-13 10:50", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 21:58", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 21:58", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 22:01", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 22:07", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-24 20:00", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: assetUrl("redacted-image.svg") },
+  { updated_on: "2026-08-31 16:07", tl_state_name: "ติดตามเรื่อง",     first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+];

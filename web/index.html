@@ -223,7 +223,7 @@
       <div class="card__head">
         <div class="d-flex align-items-center gap-2">
           <i class="bi bi-file-text-fill text-primary"></i>
-          <span>รายละเอียดปัญหา (2026-6U23NF)</span>
+          <span>รายละเอียดปัญหา (2026-62CT43)</span>
         </div>
         <div class="status-pill">กำลังดำเนินการ</div>
       </div>
@@ -239,24 +239,7 @@
           <i class="bi bi-clock-history"></i> <span>Timeline การดำเนินงาน</span>
         </div>
       </div>
-      <div class="card__body timeline-container">
-        <div class="timeline-row">
-          <div class="tl-center"><div class="tl-line"></div><div class="tl-dot"></div></div>
-          <div class="tl-right">
-            <div class="tl-badge bg-warning bg-opacity-10 text-dark border border-warning">รอรับเรื่อง</div>
-            <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย คุณทดสอบ ระบบ</div>
-            <div class="tl-time">อ. 11 ส.ค. 69 10:05</div>
-          </div>
-        </div>
-        <div class="timeline-row">
-          <div class="tl-center"><div class="tl-dot" style="background: #e0f2fe; border-color: #0284c7;"></div></div>
-          <div class="tl-right">
-            <div class="tl-badge bg-info bg-opacity-10 text-info border border-info">แจ้งเรื่อง</div>
-            <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย ผู้แจ้ง</div>
-            <div class="tl-time">อ. 11 ส.ค. 69 10:01</div>
-          </div>
-        </div>
-      </div>
+      <div class="card__body timeline-container" id="lockedTimelineBody"></div>
     </section>
 
     <!-- AI วิเคราะห์ปัญหา -->
@@ -327,10 +310,46 @@
     getCredentialStatus,
     getRenderedContent,
     lockedCase,
+    lockedTimeline,
     unlockSensitiveCase,
   } from "../shared/sensitive-mock.js";
 
   const root = document.getElementById("sensitive-root");
+
+  // ไทม์ไลน์ตอนยังล็อก — API ส่งรายการมาครบ ตัดแค่ note กับ photo
+  // เจ้าหน้าที่จึงยังเห็นว่าเรื่องเดินไปถึงไหน ใครทำ เมื่อไหร่
+  const TIMELINE_TONE = {
+    "รอรับเรื่อง": ["bg-warning bg-opacity-10 text-dark border border-warning", "#fef3c7", "#f59e0b"],
+    "รับเรื่อง": ["bg-info bg-opacity-10 text-info border border-info", "#e0f2fe", "#0284c7"],
+    "ส่งต่อ": ["bg-primary bg-opacity-10 text-primary border border-primary", "#e0e7ff", "#6366f1"],
+    "กำลังดำเนินการ": ["bg-warning bg-opacity-10 text-dark border border-warning", "#fef3c7", "#f59e0b"],
+    "ติดตามเรื่อง": ["bg-secondary bg-opacity-10 text-secondary border border-secondary", "#e2e8f0", "#64748b"],
+  };
+
+  function renderLockedTimeline() {
+    const body = document.getElementById("lockedTimelineBody");
+    if (!body) return;
+    body.innerHTML = lockedTimeline
+      .map((item, index) => {
+        const [badge, dotBg, dotBorder] =
+          TIMELINE_TONE[item.tl_state_name] || TIMELINE_TONE["ติดตามเรื่อง"];
+        const last = index === lockedTimeline.length - 1;
+        return `
+          <div class="timeline-row">
+            <div class="tl-center">
+              ${last ? "" : '<div class="tl-line"></div>'}
+              <div class="tl-dot" style="background:${dotBg}; border-color:${dotBorder};"></div>
+            </div>
+            <div class="tl-right">
+              <div class="tl-badge ${badge}">${item.tl_state_name}</div>
+              <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย ${item.group_name || item.first_name}</div>
+              <div class="tl-time">${item.updated_on} น.</div>
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+  }
 
   const LOCK_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: -2px; margin-right: 4px;"><path d="M7 10V7a5 5 0 0 1 9.6-1.95M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   
@@ -387,13 +406,11 @@
     return `
       <div class="row g-4 align-items-stretch">
         <div class="col-lg-5">
-          <div class="bg-light border rounded-4 d-flex flex-column align-items-center justify-content-center text-center p-4 h-100" style="min-height: 320px;">
-            <div style="width:64px; height:64px; background-color:#fee2e2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:16px;">
-              <i class="bi bi-shield-lock-fill fs-2 text-danger"></i>
-            </div>
-            <h6 class="fw-bold mb-1 text-dark" style="font-size: 1.05rem;">ภาพถูกปกปิดข้อมูล sensitive</h6>
-            <p class="text-muted small mb-4">ปลดล็อกเพื่อดูภาพฉบับเต็ม</p>
-            <button type="button" class="btn btn-fondue px-4 py-2 shadow-sm" id="unlock-button">
+          <div class="d-flex flex-column gap-3 h-100">
+            <img src="${lockedCase.censoredPhoto}" alt="ภาพถูกปกปิดข้อมูลอ่อนไหว"
+                 class="img-fluid rounded-4 border w-100"
+                 style="aspect-ratio: 1/1; object-fit: cover;" draggable="false">
+            <button type="button" class="btn btn-fondue w-100 py-2 shadow-sm" id="unlock-button">
               ${LOCK_ICON} ปลดล็อก
             </button>
           </div>
@@ -421,7 +438,7 @@
             <div class="info-row align-items-center">
               <div class="info-label">รายละเอียด:</div>
               <div class="info-value d-flex align-items-center justify-content-between w-100" style="gap: 12px;">
-                <span class="text-muted" style="letter-spacing: 2px;">xxxxxxxxxxxxx</span>
+                <span class="text-muted" style="letter-spacing: 2px;">***</span>
                 <button type="button" class="btn btn-fondue btn-sm px-3 shadow-sm" id="unlock-button-inline">
                   ${LOCK_ICON} ปลดล็อก
                 </button>
@@ -447,6 +464,9 @@
 
   function renderLocked() {
     root.innerHTML = lockedMarkup();
+    const timelineCard = document.getElementById("timelineCard");
+    if (timelineCard) timelineCard.style.display = "";
+    renderLockedTimeline();
     document.getElementById("unlock-button").addEventListener("click", openUnlockFlow);
     document.getElementById("unlock-button-inline").addEventListener("click", openUnlockFlow);
     document.getElementById("change-category-btn-locked").addEventListener("click", openCategoryModal);
