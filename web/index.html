@@ -327,7 +327,6 @@
     getCredentialStatus,
     getRenderedContent,
     lockedCase,
-    resetSensitivePin,
     unlockSensitiveCase,
   } from "../shared/sensitive-mock.js";
 
@@ -348,12 +347,6 @@
       title: "ตั้งรหัสผ่านความปลอดภัย", 
       description: "กรุณาตั้งรหัสผ่าน 6 หลักสำหรับการเข้าดูข้อมูล Sensitive", 
       submitLabel: "บันทึกและปลดล็อก",
-      showCancel: true 
-    },
-    reset: { 
-      title: "ตั้งรหัสผ่านใหม่", 
-      description: "กรุณากรอกรหัสผ่านใหม่ 6 หลักที่ต้องการใช้งาน", 
-      submitLabel: "บันทึกรหัสผ่านใหม่",
       showCancel: true 
     },
     unlock: { 
@@ -460,7 +453,9 @@
   }
 
   async function openUnlockFlow() {
-    openPinModal("reset");
+    // ครั้งแรกให้ตั้งรหัส ครั้งต่อไปให้กรอกเพื่อปลดล็อก
+    const status = await getCredentialStatus();
+    openPinModal(status.hasPin ? "unlock" : "setup");
   }
 
   function pinFieldMarkup(id, label) {
@@ -472,7 +467,7 @@
 
   function openPinModal(mode, notice = "") {
     const content = MODE_CONTENT[mode] || MODE_CONTENT.setup;
-    const needsConfirm = mode === "setup" || mode === "reset";
+    const needsConfirm = mode === "setup";
 
     const backdrop = document.createElement("div");
     backdrop.className = "position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center";
@@ -493,7 +488,6 @@
             <button type="submit" class="btn btn-fondue w-50 py-2 shadow-sm rounded-pill">${content.submitLabel}</button>
           </div>
           
-          ${mode === "unlock" ? '<div class="text-center mt-3"><button type="button" class="btn btn-link btn-sm text-muted forgot-pin-btn text-decoration-none">ลืมรหัสผ่าน?</button></div>' : ""}
         </form>
       </div>
     `;
@@ -512,11 +506,6 @@
     };
 
     backdrop.querySelectorAll(".modal-close-btn").forEach(btn => btn.addEventListener("click", close));
-    backdrop.querySelector(".forgot-pin-btn")?.addEventListener("click", () => {
-      close();
-      openPinModal("reset");
-    });
-
     backdrop.querySelector("form").addEventListener("submit", async (event) => {
       event.preventDefault();
       errorBox.hidden = true;
@@ -534,13 +523,10 @@
       submit.textContent = "กำลังดำเนินการ...";
 
       try {
-        if (mode === "setup" || mode === "reset") {
-          await (mode === "setup" ? createSensitivePin : resetSensitivePin)(pin);
+        if (mode === "setup") {
+          await createSensitivePin(pin);
           close();
-          openPinModal(
-            "unlock", 
-            mode === "setup" ? "ตั้งรหัสผ่านสำเร็จ กรุณากรอกรหัสผ่านเพื่อปลดล็อก" : "บันทึกรหัสผ่านใหม่แล้ว กรุณากรอกรหัสผ่านเพื่อปลดล็อก"
-          );
+          openPinModal("unlock", "ตั้งรหัสผ่านสำเร็จ กรุณากรอกรหัสผ่านเพื่อปลดล็อก");
           return;
         }
 

@@ -15,7 +15,6 @@ import {
   getCredentialStatus,
   getRenderedContent,
   lockedCase,
-  resetSensitivePin,
   revokeViewSession,
   unlockSensitiveCase,
 } from "../shared/sensitive-mock.js";
@@ -31,11 +30,6 @@ const MODE_CONTENT = {
     title: "ตั้ง PIN สำหรับข้อมูล Sensitive",
     description: "PIN นี้ใช้สำหรับเปิดดูข้อมูล Sensitive ในเรื่องแจ้งของคุณ",
     submitLabel: "ตั้ง PIN",
-  },
-  reset: {
-    title: "ตั้ง PIN ใหม่",
-    description: "กรอก PIN ใหม่ที่ต้องการใช้เปิดข้อมูล Sensitive",
-    submitLabel: "บันทึก PIN ใหม่",
   },
   unlock: {
     title: "ปลดล็อกข้อมูล Sensitive",
@@ -139,7 +133,7 @@ function pinFieldMarkup(id, label) {
 
 function openPinModal(mode, notice = "") {
   const content = MODE_CONTENT[mode] || MODE_CONTENT.unlock;
-  const needsConfirm = mode === "setup" || mode === "reset";
+  const needsConfirm = mode === "setup";
 
   const backdrop = document.createElement("div");
   backdrop.className = "sensitive-modal-backdrop";
@@ -155,7 +149,6 @@ function openPinModal(mode, notice = "") {
         ${needsConfirm ? pinFieldMarkup("sensitive-confirm-pin", "ยืนยัน PIN") : ""}
         <div class="sensitive-pin-error" role="alert" hidden></div>
         <button type="submit" class="sensitive-primary-button">${content.submitLabel}</button>
-        ${mode === "unlock" ? '<button type="button" class="sensitive-link-button">ลืม PIN</button>' : ""}
       </form>
     </div>
   `;
@@ -186,11 +179,6 @@ function openPinModal(mode, notice = "") {
   };
 
   backdrop.querySelector(".sensitive-modal-close").addEventListener("click", close);
-  backdrop.querySelector(".sensitive-link-button")?.addEventListener("click", () => {
-    close();
-    openPinModal("reset");
-  });
-
   backdrop.querySelector("form").addEventListener("submit", async (event) => {
     event.preventDefault();
     errorBox.hidden = true;
@@ -208,15 +196,10 @@ function openPinModal(mode, notice = "") {
     submit.textContent = "กำลังดำเนินการ...";
 
     try {
-      if (mode === "setup" || mode === "reset") {
-        await (mode === "setup" ? createSensitivePin : resetSensitivePin)(pin);
+      if (mode === "setup") {
+        await createSensitivePin(pin);
         close();
-        openPinModal(
-          "unlock",
-          mode === "setup"
-            ? "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก"
-            : "บันทึก PIN ใหม่แล้ว กรุณากรอก PIN เพื่อปลดล็อก"
-        );
+        openPinModal("unlock", "ตั้ง PIN สำเร็จ กรุณากรอก PIN อีกครั้งเพื่อปลดล็อก");
         return;
       }
 

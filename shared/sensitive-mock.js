@@ -6,6 +6,8 @@
  *
  *   1. getCredentialStatus()          → เคยตั้ง PIN ไว้หรือยัง
  *   2. createSensitivePin(pin)        → ตั้ง PIN ครั้งแรก (ถ้ายังไม่เคย)
+ *
+ * ยังไม่มีการรีเซ็ต PIN ในเฟสนี้ รอทีมตกลงเงื่อนไขก่อน
  *   3. unlockSensitiveCase(id, pin)   → ปลดล็อก ได้ view token กลับมา
  *   4. getRenderedContent(id, token)  → ได้ URL ภาพหลายหน้า + ภาพแนบ
  *   5. revokeViewSession(token)       → ปิดหน้าจอ คืน session
@@ -48,10 +50,6 @@ export async function createSensitivePin(pin) {
   sessionStorage.setItem(PIN_KEY, JSON.stringify({ pin }));
   sessionStorage.removeItem(ATTEMPT_KEY);
   return { success: true };
-}
-
-export async function resetSensitivePin(pin) {
-  return createSensitivePin(pin);
 }
 
 export async function unlockSensitiveCase(ticketId, pin) {
