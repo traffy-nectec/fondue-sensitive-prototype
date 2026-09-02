@@ -23,7 +23,6 @@ import {
 const root = document.getElementById("root");
 
 const LOCK_ICON = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 9.6-1.95M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const UNLOCKED_ICON = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M8 10V7a4 4 0 0 1 7.75-1.39M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
 const PIN_ICON = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M7 10V7a5 5 0 0 1 10 0v3M6 10h12a1 1 0 0 1 1 1v9H5v-9a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 const MODE_CONTENT = {
@@ -46,21 +45,17 @@ let viewToken = "";
 function lockedMarkup() {
   return `
     <main class="sensitive-case-view with-actions">
-      <section class="sensitive-locked-toolbar">
-        <div>
-          <span class="sensitive-security-badge">ข้อมูล Sensitive</span>
-          <strong>ข้อมูลฉบับเต็มถูกล็อก</strong>
-        </div>
-        <button type="button" class="sensitive-toolbar-unlock" id="unlock-button">
-          ${LOCK_ICON}ปลดล็อก
-        </button>
-      </section>
-
       <div class="image-detail-container sensitive-single-image-container">
         <div class="before-image-container">
           <div class="before-text-container"><span class="before-text">แจ้ง</span></div>
           <img class="before-image" src="${lockedCase.censoredPhoto}"
                alt="ภาพที่ปิดข้อมูล Sensitive แล้ว" draggable="false">
+          <div class="sensitive-image-lock-overlay">
+            <span>ภาพถูกซ่อน</span>
+            <button type="button" class="sensitive-toolbar-unlock" id="unlock-button">
+              ${LOCK_ICON}ปลดล็อก
+            </button>
+          </div>
         </div>
       </div>
 
@@ -83,11 +78,6 @@ function lockedMarkup() {
         </div>
       </div>
 
-      <div class="content-detail-container">
-        <span class="report-content-detail-container" style="font-weight:700">การดำเนินงาน</span>
-        ${lockedTimelineMarkup()}
-      </div>
-
       <div class="extra-detail-container">
         <div class="ticket-id-container">
           <img class="verified-image" src="./assets/verified-Da4awtgz.png" alt="">
@@ -101,6 +91,8 @@ function lockedMarkup() {
           <span class="problem-type-text">${lockedCase.category}</span>
         </div>
       </div>
+
+      <div class="timeline-detail-container">${lockedTimelineMarkup()}</div>
     </main>
   `;
 }
@@ -112,7 +104,7 @@ function lockedMarkup() {
 function lockedTimelineMarkup() {
   return lockedTimeline
     .map((item, index) => {
-      const state = item.tl_state_name === "ส่งต่อ" ? "forward" : "inprogress";
+      const state = item.state || "inprogress";
       const isLast = index === lockedTimeline.length - 1;
 
       return `
@@ -123,14 +115,28 @@ function lockedTimelineMarkup() {
           <div class="timeline-content">
             <div>
               <span class="${isLast ? "bold-timeline-text" : "regular-timeline-text"}">${item.tl_state_name}&nbsp;</span>
-              <span class="timestamp-timeline-text">${item.updated_on} น.</span>
+              <span class="timestamp-timeline-text">${item.display_date} น.</span>
             </div>
+            ${item.group_name ? `<span class="${isLast ? "bold-timeline-text" : "regular-timeline-text"}">ใช้เวลา ${formatElapsed(item.updated_on)}</span>` : ""}
             <span class="org-manage-text">โดย ${item.group_name || item.first_name}</span>
           </div>
         </div>
       `;
     })
     .join("");
+}
+
+function formatElapsed(updatedOn) {
+  const started = new Date("2026-08-11T10:01:00+07:00");
+  const updated = new Date(updatedOn.replace(" ", "T") + ":00+07:00");
+  let minutes = Math.max(0, Math.floor((updated - started) / 60000));
+  const days = Math.floor(minutes / 1440);
+  minutes %= 1440;
+  const hours = Math.floor(minutes / 60);
+  minutes %= 60;
+  return [days && `${days} วัน`, hours && `${hours} ชม.`, minutes && `${minutes} นาที`]
+    .filter(Boolean)
+    .join(" ") || "0 นาที";
 }
 
 function renderLocked() {
@@ -271,25 +277,16 @@ async function renderUnlocked() {
 
   root.innerHTML = `
     <main class="sensitive-case-view with-actions">
-      <section class="sensitive-unlocked-heading" id="unlocked-banner">
-        <div>
-          <span class="sensitive-security-badge">ปลดล็อกแล้ว</span>
-          <h1>รายละเอียดเรื่องแจ้ง</h1>
-          <p>ข้อมูลแสดงเป็นภาพและฝังลายน้ำของผู้เปิดดูแล้ว</p>
-        </div>
-        ${UNLOCKED_ICON}
-      </section>
-
-      <button type="button" class="sensitive-view-all-button" id="open-gallery">
-        <span class="sensitive-view-all-icon" aria-hidden="true">▣</span>
-        <span>
-          <strong>ดูภาพทั้งหมด</strong>
-          <small>${content.media.length} ภาพ พร้อมลายน้ำ</small>
-        </span>
-        <span aria-hidden="true">›</span>
-      </button>
-
       <section class="sensitive-rendered-card">
+        <div class="sensitive-rendered-toolbar">
+          <div class="sensitive-rendered-badges">
+            <span class="sensitive-security-badge">SENSITIVE</span>
+            <span class="sensitive-page-count">${content.pages.length} หน้า</span>
+          </div>
+          <button type="button" class="sensitive-compact-gallery-button" id="open-gallery">
+            ▣ ดูภาพทั้งหมด (${content.media.length})
+          </button>
+        </div>
         ${content.pages
           .map(
             (url, index) =>
@@ -306,20 +303,6 @@ async function renderUnlocked() {
   document
     .getElementById("open-gallery")
     .addEventListener("click", () => openGallery(content.media));
-
-  // แจ้งว่าปลดล็อกสำเร็จแล้วค่อยหายไปเอง ไม่ต้องกินพื้นที่ถาวร
-  // เพราะภาพที่แสดงอยู่ก็บอกอยู่แล้วว่าปลดล็อกได้
-  const banner = document.getElementById("unlocked-banner");
-  if (banner) {
-    banner.style.transition = "opacity .4s ease, max-height .4s ease, margin .4s ease";
-    setTimeout(() => {
-      banner.style.opacity = "0";
-      banner.style.maxHeight = "0";
-      banner.style.margin = "0";
-      banner.style.overflow = "hidden";
-      setTimeout(() => banner.remove(), 450);
-    }, 2600);
-  }
 }
 
 /* ---------- แกลเลอรีภาพเต็ม ---------- */

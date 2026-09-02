@@ -140,7 +140,7 @@ export const lockedCase = {
   censoredDescription:
     "ผู้แจ้งชื่อ *** แจ้งเหตุบริเวณ *** กรุณาติดต่อกลับที่หมายเลข ***",
   censoredAddress: "แขวงวังทองหลาง เขตวังทองหลาง กรุงเทพมหานคร",
-  censoredPhoto: assetUrl("redacted-image.svg"),
+  censoredPhoto: assetUrl("redacted-eyes.jpg"),
 };
 
 /**
@@ -154,14 +154,14 @@ export const lockedCase = {
  * ข้อมูลอิงจากเคสจริง 2026-62CT43
  */
 export const lockedTimeline = [
-  { updated_on: "2026-08-11 10:01", tl_state_name: "รอรับเรื่อง",      first_name: "ผู้แจ้ง",      group_name: null,               note: "", photo: assetUrl("redacted-image.svg") },
-  { updated_on: "2026-08-13 10:28", tl_state_name: "รับเรื่อง",        first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-13 10:29", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-13 10:50", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-17 21:58", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-17 21:58", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-17 22:01", tl_state_name: "ส่งต่อ",           first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-17 22:07", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
-  { updated_on: "2026-08-24 20:00", tl_state_name: "กำลังดำเนินการ",  first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: assetUrl("redacted-image.svg") },
-  { updated_on: "2026-08-31 16:07", tl_state_name: "ติดตามเรื่อง",     first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-11 10:01", display_date: "อ. 11 ส.ค. 69 10:01", state: "report",     tl_state_name: "รอรับเรื่อง",     first_name: "ผู้แจ้ง",      group_name: null,               note: "", photo: assetUrl("redacted-eyes.jpg") },
+  { updated_on: "2026-08-13 10:28", display_date: "พฤ. 13 ส.ค. 69 10:28", state: "inprogress", tl_state_name: "รับเรื่อง",       first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-13 10:29", display_date: "พฤ. 13 ส.ค. 69 10:29", state: "forward",    tl_state_name: "ส่งต่อ",          first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-13 10:50", display_date: "พฤ. 13 ส.ค. 69 10:50", state: "forward",    tl_state_name: "ส่งต่อ",          first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 21:58", display_date: "จ. 17 ส.ค. 69 21:58", state: "forward",    tl_state_name: "ส่งต่อ",          first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 21:58", display_date: "จ. 17 ส.ค. 69 21:58", state: "inprogress", tl_state_name: "กำลังดำเนินการ", first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 22:01", display_date: "จ. 17 ส.ค. 69 22:01", state: "forward",    tl_state_name: "ส่งต่อ",          first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-17 22:07", display_date: "จ. 17 ส.ค. 69 22:07", state: "inprogress", tl_state_name: "กำลังดำเนินการ", first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
+  { updated_on: "2026-08-24 20:00", display_date: "จ. 24 ส.ค. 69 20:00", state: "inprogress", tl_state_name: "กำลังดำเนินการ", first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: assetUrl("redacted-eyes.jpg") },
+  { updated_on: "2026-08-31 16:07", display_date: "จ. 31 ส.ค. 69 16:07", state: "follow",     tl_state_name: "ติดตามเรื่อง",    first_name: "เจ้าหน้าที่", group_name: "Traffy @ ITS Lab2", note: "", photo: null },
 ];

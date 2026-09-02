@@ -343,7 +343,7 @@
             <div class="tl-right">
               <div class="tl-badge ${badge}">${item.tl_state_name}</div>
               <div class="fw-bold" style="font-size: 0.85rem; color: #334155;">โดย ${item.group_name || item.first_name}</div>
-              <div class="tl-time">${item.updated_on} น.</div>
+              <div class="tl-time">${item.display_date} น.</div>
             </div>
           </div>
         `;
@@ -406,13 +406,17 @@
     return `
       <div class="row g-4 align-items-stretch">
         <div class="col-lg-5">
-          <div class="d-flex flex-column gap-3 h-100">
+          <div class="position-relative h-100 overflow-hidden rounded-4 border bg-light">
             <img src="${lockedCase.censoredPhoto}" alt="ภาพถูกปกปิดข้อมูลอ่อนไหว"
-                 class="img-fluid rounded-4 border w-100"
+                 class="img-fluid w-100 h-100"
                  style="aspect-ratio: 1/1; object-fit: cover;" draggable="false">
-            <button type="button" class="btn btn-fondue w-100 py-2 shadow-sm" id="unlock-button">
-              ${LOCK_ICON} ปลดล็อก
-            </button>
+            <div class="position-absolute start-0 end-0 bottom-0 d-flex align-items-center justify-content-between gap-2 m-2 px-3 py-2 rounded-3 text-white"
+                 style="background: rgba(24,18,14,.82); backdrop-filter: blur(5px);">
+              <span class="fw-bold small">ภาพถูกซ่อน</span>
+              <button type="button" class="btn btn-light btn-sm px-3 fw-bold text-nowrap" id="unlock-button" style="color:#57351f;">
+                ${LOCK_ICON} ปลดล็อก
+              </button>
+            </div>
           </div>
         </div>
 
@@ -437,12 +441,7 @@
             </div>
             <div class="info-row align-items-center">
               <div class="info-label">รายละเอียด:</div>
-              <div class="info-value d-flex align-items-center justify-content-between w-100" style="gap: 12px;">
-                <span class="text-muted" style="letter-spacing: 2px;">***</span>
-                <button type="button" class="btn btn-fondue btn-sm px-3 shadow-sm" id="unlock-button-inline">
-                  ${LOCK_ICON} ปลดล็อก
-                </button>
-              </div>
+              <div class="info-value text-muted" style="letter-spacing: 2px;">***</div>
             </div>
           </div>
 
@@ -468,7 +467,6 @@
     if (timelineCard) timelineCard.style.display = "";
     renderLockedTimeline();
     document.getElementById("unlock-button").addEventListener("click", openUnlockFlow);
-    document.getElementById("unlock-button-inline").addEventListener("click", openUnlockFlow);
     document.getElementById("change-category-btn-locked").addEventListener("click", openCategoryModal);
   }
 
@@ -670,7 +668,7 @@
             (url, index) =>
               `<div class="sensitive-rendered-page is-loaded position-relative text-center bg-light p-2 rounded-3 border image-wrapper">
                  <div class="watermark-overlay" style="display: block;"></div>
-                 <img class="img-fluid rounded shadow-sm rendered-img-click" src="${url}" alt="รายละเอียดหน้า ${index + 1}" data-index="${index}" draggable="false" loading="lazy" style="max-height: 450px; object-fit: contain; cursor: pointer;">
+                 <img class="img-fluid rounded shadow-sm" src="${url}" alt="รายละเอียดหน้า ${index + 1}" draggable="false" loading="lazy" style="max-height: 450px; object-fit: contain;">
                </div>`
           )
           .join("")}
@@ -679,13 +677,6 @@
 
     document.getElementById("open-gallery").addEventListener("click", () => openGallery(content.media));
     document.getElementById("change-category-btn").addEventListener("click", openCategoryModal);
-
-    root.querySelectorAll(".rendered-img-click").forEach(img => {
-      img.addEventListener("click", (e) => {
-        const idx = parseInt(e.currentTarget.getAttribute("data-index"));
-        openGallery(content.media, idx);
-      });
-    });
   }
 
   function openGallery(media, startIndex = 0) {

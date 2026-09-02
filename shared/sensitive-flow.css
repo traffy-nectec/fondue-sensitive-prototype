@@ -277,14 +277,33 @@
  * Styles for the new locked state 
  */
 .sv-locked-new {
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  overflow: hidden;
   background: #FAFAFA;
   border: 1px solid #EAEAEA;
   border-radius: var(--sv-radius);
-  padding: 32px 16px 24px;
-  gap: 6px;
+  padding: 0;
+  gap: 0;
 }
+
+.sv-locked-media { position: relative; width: 100%; }
+
+.sv-locked-overlay {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 8px 8px 12px;
+  border-radius: 10px;
+  color: #fff;
+  background: rgba(32, 24, 19, .82);
+}
+
+.sv-locked-overlay-label { font-size: 13px; font-weight: 700; }
 
 .sv-locked-icon-wrap {
   width: 72px;
@@ -315,12 +334,13 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: var(--sv-accent);
+  background: #fff;
+  color: var(--sv-accent);
   border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  width: 100%;
-  max-width: 240px;
+  padding: 8px 14px;
+  font-size: 13px;
+  width: auto;
+  max-width: none;
 }
 
 /*
@@ -480,8 +500,8 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: var(--sv-radius);
-  border: 1px solid var(--sv-line);
+  border-radius: 0;
+  border: 0;
   -webkit-user-select: none;
   user-select: none;
 }

@@ -399,31 +399,32 @@
     .timeline {
       display: flex;
       flex-direction: column;
-      padding-left: 8px;
-      margin-top: 16px;
+      padding: 10px 16px 100px 20px;
+      border-top: 1px solid #e0e0e0;
     }
 
     .timeline-item {
       display: flex;
       position: relative;
-      margin-bottom: 16px;
+      min-height: 80px;
     }
 
     .timeline-dot-outline {
-      width: 24px;
-      height: 24px;
-      border-radius: 12px;
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      border-radius: 15px;
       border: 2px solid #fbbc05;
-      background: #fff;
+      background: #fef3c7;
       z-index: 2;
       margin-right: 12px;
     }
 
     .timeline-line {
       position: absolute;
-      left: 11px;
-      top: 24px;
-      bottom: -16px;
+      left: 14px;
+      top: 30px;
+      bottom: 0;
       width: 2px;
       background: #e6e9ee;
       z-index: 1;
@@ -435,12 +436,13 @@
 
     .timeline-content-no-bg {
       flex: 1;
-      padding-bottom: 16px;
+      padding: 2px 5px 24px;
     }
 
     .timeline-header-row {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 8px;
     }
@@ -450,7 +452,7 @@
       color: #c9711e;
       padding: 4px 10px;
       border-radius: 12px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
     }
 
@@ -538,9 +540,6 @@
               <div class="ticket-id">#2026-62CT43</div>
               <div class="ticket-title-row">
                 <div class="ticket-title">XXXXX XX XXXX</div>
-                <!-- ปุ่มปลดล็อก (ถ้าเรื่อง sensitive) -->
-                <button class="btn-unlock-small" id="btn-top-unlock"><i class="fa-solid fa-unlock-keyhole"></i>
-                  ปลดล็อก</button>
               </div>
             </div>
           </div>
@@ -654,24 +653,33 @@
 
     // ไทม์ไลน์ตอนยังล็อก แสดงสถานะ เวลา และหน่วยงานที่ดำเนินการ
     // ส่วนข้อความกับภาพถูกตัดจากฝั่ง API แล้ว จึงไม่มีอะไรให้ซ่อนเพิ่ม
+    const TIMELINE_TONE = {
+      report: ["#FEE2E2", "#EF4444"],
+      inprogress: ["#FEF3C7", "#F59E0B"],
+      forward: ["#E0F2FE", "#0284C7"],
+      follow: ["#E2E8F0", "#64748B"],
+    };
+
     document.getElementById("normal-timeline").innerHTML = lockedTimeline
-      .map((item) => `
+      .map((item) => {
+        const [background, border] = TIMELINE_TONE[item.state] || TIMELINE_TONE.inprogress;
+        return `
         <div class="timeline-item">
-          <div class="timeline-dot-outline"></div>
+          <div class="timeline-dot-outline" style="background:${background};border-color:${border};"></div>
           <div class="timeline-line"></div>
           <div class="timeline-content-no-bg">
             <div class="timeline-header-row">
-              <span class="status-pill-small">${item.tl_state_name}</span>
+              <span class="status-pill-small" style="background:${background};border:1px solid ${border};">${item.tl_state_name}</span>
               <span class="timeline-author">โดย ${item.group_name || item.first_name}</span>
             </div>
-            <div class="timeline-time-text">${item.updated_on} น.</div>
+            <div class="timeline-time-text">${item.display_date}</div>
           </div>
         </div>
-      `)
+      `;})
       .join("");
 
     // เรียกใช้งาน Sensitive Flow ใส่ลงใน #sensitive-slot
-    const sensitiveFlow = mountSensitiveFlow(document.getElementById("sensitive-slot"), {
+    mountSensitiveFlow(document.getElementById("sensitive-slot"), {
       ticketId: lockedCase.ticketId,
       onStateChange: (state) => {
         const topHeader = document.getElementById("sensitive-top-header");
@@ -689,10 +697,6 @@
         }
       }
     });
-
-    document.getElementById("btn-top-unlock")
-      .addEventListener("click", sensitiveFlow.openUnlock);
-
 
   </script>
 </body>

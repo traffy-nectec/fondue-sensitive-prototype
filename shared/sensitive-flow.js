@@ -48,6 +48,7 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
   function renderLocked() {
     setState("locked");
     const wrap = el("div", "sv-locked sv-locked-new");
+    const media = el("div", "sv-locked-media");
 
     // ภาพตอนล็อกต้องเป็นภาพเดียวกันทั้ง 3 platform เปลี่ยนที่ lockedCase.censoredPhoto ที่เดียว
     const cover = el("img", "sv-locked-cover");
@@ -55,11 +56,16 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     cover.alt = "ภาพถูกปกปิดข้อมูลอ่อนไหว";
     cover.draggable = false;
 
+    const overlay = el("div", "sv-locked-overlay");
+    overlay.append(el("span", "sv-locked-overlay-label", "ภาพถูกซ่อน"));
+
     const button = el("button", "sv-button sv-button-unlock");
-    button.innerHTML = '<i class="fa-solid fa-unlock" style="font-size: 14px;"></i> ปลดล็อกเพื่อดูรูปภาพ';
+    button.innerHTML = '<i class="fa-solid fa-unlock" style="font-size: 14px;"></i> ปลดล็อก';
     button.addEventListener("click", openUnlockFlow);
 
-    wrap.append(cover, button);
+    overlay.append(button);
+    media.append(cover, overlay);
+    wrap.append(media);
     render(wrap);
   }
 
@@ -312,7 +318,6 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
 
   return {
     reset: renderLocked,
-    openUnlock: openUnlockFlow,
     getState: () => state,
   };
 }
