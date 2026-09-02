@@ -316,6 +316,7 @@
 
   const root = document.getElementById("sensitive-root");
 
+
   // ไทม์ไลน์ตอนยังล็อก — API ส่งรายการมาครบ ตัดแค่ note กับ photo
   // เจ้าหน้าที่จึงยังเห็นว่าเรื่องเดินไปถึงไหน ใครทำ เมื่อไหร่
   const TIMELINE_TONE = {
@@ -441,7 +442,7 @@
             </div>
             <div class="info-row align-items-center">
               <div class="info-label">รายละเอียด:</div>
-              <div class="info-value text-muted" style="letter-spacing: 2px;">***</div>
+              <div class="info-value text-muted">${lockedCase.censoredDescription}</div>
             </div>
           </div>
 

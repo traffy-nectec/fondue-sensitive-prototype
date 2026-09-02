@@ -539,7 +539,7 @@
             <div class="ticket-info">
               <div class="ticket-id">#2026-62CT43</div>
               <div class="ticket-title-row">
-                <div class="ticket-title">XXXXX XX XXXX</div>
+                <div class="ticket-title" id="val-description"></div>
               </div>
             </div>
           </div>
@@ -650,6 +650,10 @@
   <script type="module">
     import { mountSensitiveFlow } from "../shared/sensitive-flow.js?v=2";
     import { lockedCase, lockedTimeline } from "../shared/sensitive-mock.js";
+
+    // ข้อความที่บอท censor แล้ว ปิดเฉพาะคำที่เป็นข้อมูลส่วนบุคคล ไม่ได้ปิดทั้งก้อน
+    document.getElementById("val-description").textContent = lockedCase.censoredDescription;
+    document.getElementById("val-address").textContent = lockedCase.censoredAddress;
 
     // ไทม์ไลน์ตอนยังล็อก แสดงสถานะ เวลา และหน่วยงานที่ดำเนินการ
     // ส่วนข้อความกับภาพถูกตัดจากฝั่ง API แล้ว จึงไม่มีอะไรให้ซ่อนเพิ่ม
