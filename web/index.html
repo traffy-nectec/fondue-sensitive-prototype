@@ -334,7 +334,7 @@
     unlockSensitiveCase,
   } from "../shared/sensitive-mock.js";
   import { SENSITIVE_TEXT as T } from "../shared/sensitive-text.js";
-  import { GALLERY_ICON_SVG, LOCK_ICON_SVG } from "../shared/sensitive-flow.js?v=4";
+  import { GALLERY_ICON_SVG, LOCK_ICON_SVG, openSecureZoomModal } from "../shared/sensitive-flow.js?v=4";
 
   const root = document.getElementById("sensitive-root");
 
@@ -709,74 +709,37 @@
         ${content.pages
           .map(
             (url, index) =>
-              `<div class="sensitive-rendered-page is-loaded position-relative image-wrapper sv-web-page">
+              `<div class="sensitive-rendered-page is-loaded position-relative image-wrapper sv-web-page sv-page-card" data-page-index="${index}">
                  <div class="watermark-overlay" style="display: block;"></div>
                  <img class="sv-web-page-img" src="${url}" alt="รายละเอียดหน้า ${index + 1}"
-                      draggable="false" loading="lazy" data-page-index="${index}"
-                      title="${T.unlocked.zoomHint}">
+                      draggable="false" loading="lazy" data-page-index="${index}">
+                 <button type="button" class="sv-page-zoom-hint" data-page-index="${index}">
+                   <span>🔍</span> แตะเพื่อซูม
+                 </button>
                </div>`
           )
           .join("")}
       </section>
     `;
 
-    document.getElementById("open-gallery").addEventListener("click", () => openGallery(content.media));
+    document.getElementById("open-gallery").addEventListener("click", () => openSecureZoomModal(content.media, 0, document.body));
     document.getElementById("change-category-btn").addEventListener("click", openCategoryModal);
 
-    // กดที่หน้าไหนก็เปิดแกลเลอรีที่หน้านั้น ดูขนาดเต็มความละเอียดต้นฉบับได้
+    // กดที่หน้าไหนก็เปิดดูขนาดเต็มพร้อมฟังก์ชันซูมและบล็อกการดาวน์โหลด
     const pageMedia = content.pages.map((url, index) => ({
       id: `page-${index + 1}`,
-      label: `รายละเอียดหน้า ${index + 1}`,
+      label: `หน้าที่ ${index + 1} จาก ${content.pages.length} (รายละเอียดและไทม์ไลน์)`,
       url,
     }));
-    root.querySelectorAll(".sv-web-page-img").forEach((image) => {
-      image.addEventListener("click", () =>
-        openGallery(pageMedia, Number(image.dataset.pageIndex))
-      );
+    root.querySelectorAll(".sv-page-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        openSecureZoomModal(pageMedia, Number(card.dataset.pageIndex || 0), document.body);
+      });
     });
   }
 
   function openGallery(media, startIndex = 0) {
-    let index = startIndex;
-
-    const backdrop = document.createElement("div");
-    backdrop.className = "position-fixed top-0 start-0 w-100 h-100 d-flex flex-column text-white";
-    backdrop.style.cssText = "background: rgba(0,0,0,0.95); z-index: 9999;";
-    document.body.append(backdrop);
-
-    const draw = () => {
-      const current = media[index];
-      backdrop.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center p-3 border-bottom border-secondary bg-dark bg-opacity-50">
-          <div>
-            <strong class="d-block" style="font-size: 0.95rem;">${current.label || T.gallery.untitled}</strong>
-            <span class="text-light opacity-75 small">${T.gallery.counter(index, media.length)}</span>
-          </div>
-          <button type="button" class="btn-close btn-close-white fs-5 gallery-close-btn" aria-label="${T.gallery.close}"></button>
-        </div>
-        <div class="flex-grow-1 d-flex align-items-center justify-content-center position-relative p-3">
-          ${media.length > 1 ? `<button type="button" class="btn btn-dark opacity-75 position-absolute start-0 ms-3 fs-4 rounded-circle p-2 gallery-prev-btn" style="width: 48px; height: 48px;" aria-label="${T.gallery.previous}">‹</button>` : ""}
-          <div class="image-wrapper text-center w-100 h-100 d-flex align-items-center justify-content-center">
-            <div class="watermark-overlay" style="display: block;"></div>
-            <img src="${current.url}" alt="${current.label || ''}" draggable="false" class="img-fluid rounded shadow" style="max-height: 85vh; object-fit: contain;">
-          </div>
-          ${media.length > 1 ? `<button type="button" class="btn btn-dark opacity-75 position-absolute end-0 me-3 fs-4 rounded-circle p-2 gallery-next-btn" style="width: 48px; height: 48px;" aria-label="${T.gallery.next}">›</button>` : ""}
-        </div>
-      `;
-
-      backdrop.querySelector(".gallery-close-btn").addEventListener("click", () => backdrop.remove());
-      backdrop.querySelector(".gallery-prev-btn")?.addEventListener("click", (e) => {
-        e.stopPropagation();
-        index = (index - 1 + media.length) % media.length;
-        draw();
-      });
-      backdrop.querySelector(".gallery-next-btn")?.addEventListener("click", (e) => {
-        index = (index + 1) % media.length;
-        draw();
-      });
-    };
-
-    draw();
+    openSecureZoomModal(media, startIndex, document.body);
   }
 
   renderLocked();

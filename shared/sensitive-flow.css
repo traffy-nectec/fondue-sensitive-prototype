@@ -697,3 +697,193 @@
   font-weight: 500;
   color: rgba(255, 255, 255, .75);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Mobile Zoom & Anti-Download Protection Engine (Web, LIFF, App)
+   ───────────────────────────────────────────────────────────────────────── */
+
+.sv-page-card {
+  position: relative;
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-touch-callout: none !important;
+}
+
+.sv-page-zoom-hint {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(23, 19, 16, 0.82);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-touch-callout: none !important;
+}
+
+.sv-page-zoom-hint span {
+  font-size: 13px;
+}
+
+.sv-page-zoom-hint:active {
+  transform: scale(0.96);
+}
+
+.sv-zoom-viewport {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none !important;
+  min-height: 0;
+  padding: 12px 16px max(70px, env(safe-area-inset-bottom) + 50px);
+  box-sizing: border-box;
+}
+
+.sv-zoom-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.sv-zoom-image {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 6px;
+  object-fit: contain;
+  pointer-events: none; /* Crucial anti-download: Image cannot be targeted */
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none !important;
+  user-select: none;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.sv-zoom-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+  user-select: none;
+  -webkit-touch-callout: none !important;
+}
+
+.sv-zoom-controls {
+  position: absolute;
+  bottom: max(38px, env(safe-area-inset-bottom) + 26px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: rgba(23, 19, 16, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 30px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.sv-zoom-btn {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sv-zoom-btn:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.sv-zoom-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.sv-zoom-badge {
+  min-width: 52px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.sv-zoom-reset {
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: #714727;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.sv-zoom-reset:active {
+  background: #8b5832;
+}
+
+.sv-zoom-notice {
+  position: absolute;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.sv-zoom-notice span {
+  color: #cfc7c1;
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+
+.sv-zoom-notice small {
+  color: #8c7d74;
+  font-size: 10px;
+}
+

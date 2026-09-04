@@ -20,7 +20,7 @@ import {
   unlockSensitiveCase,
 } from "../shared/sensitive-mock.js";
 import { SENSITIVE_TEXT as T } from "../shared/sensitive-text.js";
-import { GALLERY_ICON_SVG, LOCK_ICON_SVG } from "../shared/sensitive-flow.js?v=4";
+import { GALLERY_ICON_SVG, LOCK_ICON_SVG, openSecureZoomModal } from "../shared/sensitive-flow.js?v=4";
 
 const root = document.getElementById("root");
 
@@ -317,9 +317,12 @@ async function renderUnlocked() {
         ${content.pages
           .map(
             (url, index) =>
-              `<div class="sensitive-rendered-page is-loaded">
+              `<div class="sensitive-rendered-page is-loaded sensitive-rendered-page-clickable" data-page-index="${index}">
                  <img class="sensitive-rendered-detail" src="${url}"
                       alt="รายละเอียดหน้า ${index + 1}" draggable="false" loading="lazy">
+                 <button type="button" class="sensitive-rendered-page-zoom-hint sv-page-zoom-hint" data-page-index="${index}">
+                   <span>🔍</span> แตะเพื่อซูม
+                 </button>
                </div>`
           )
           .join("")}
@@ -327,51 +330,21 @@ async function renderUnlocked() {
     </main>
   `;
 
+  const pageMedia = content.pages.map((pUrl, pIdx) => ({
+    url: pUrl,
+    label: `หน้าที่ ${pIdx + 1} จาก ${content.pages.length} (รายละเอียดและไทม์ไลน์)`,
+  }));
+
+  root.querySelectorAll(".sensitive-rendered-page-clickable").forEach((card) => {
+    card.addEventListener("click", () => {
+      const idx = Number(card.dataset.pageIndex || 0);
+      openSecureZoomModal(pageMedia, idx, document.body);
+    });
+  });
+
   document
     .getElementById("open-gallery")
-    .addEventListener("click", () => openGallery(content.media));
-}
-
-/* ---------- แกลเลอรีภาพเต็ม ---------- */
-
-function openGallery(media) {
-  let index = 0;
-
-  const backdrop = document.createElement("div");
-  backdrop.className = "sensitive-gallery-backdrop";
-  document.body.append(backdrop);
-
-  const draw = () => {
-    const current = media[index];
-    backdrop.innerHTML = `
-      <div class="sensitive-gallery-toolbar">
-        <div>
-          <strong>${current.label || T.gallery.untitled}</strong>
-          <span>${T.gallery.counter(index, media.length)}</span>
-        </div>
-        <button type="button" aria-label="${T.gallery.close}">×</button>
-      </div>
-      <div class="sensitive-gallery-content">
-        ${media.length > 1 ? `<button type="button" class="sensitive-gallery-navigation previous" aria-label="${T.gallery.previous}">‹</button>` : ""}
-        <img src="${current.url}" alt="${current.label || T.gallery.untitled}" draggable="false">
-        ${media.length > 1 ? `<button type="button" class="sensitive-gallery-navigation next" aria-label="${T.gallery.next}">›</button>` : ""}
-      </div>
-    `;
-
-    backdrop
-      .querySelector(".sensitive-gallery-toolbar button")
-      .addEventListener("click", () => backdrop.remove());
-    backdrop.querySelector(".previous")?.addEventListener("click", () => {
-      index = (index - 1 + media.length) % media.length;
-      draw();
-    });
-    backdrop.querySelector(".next")?.addEventListener("click", () => {
-      index = (index + 1) % media.length;
-      draw();
-    });
-  };
-
-  draw();
+    .addEventListener("click", () => openSecureZoomModal(content.media, 0, document.body));
 }
 
 renderLocked();

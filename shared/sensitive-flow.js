@@ -250,13 +250,27 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
     header.append(badges, galleryBtn);
 
     const pages = el("div", "sv-pages-new");
+    const pageMedia = content.pages.map((pUrl, pIdx) => ({
+      url: pUrl,
+      label: `หน้าที่ ${pIdx + 1} จาก ${content.pages.length} (รายละเอียดและไทม์ไลน์)`,
+    }));
+
     content.pages.forEach((url, index) => {
       const figure = el("figure", "sv-page-card");
       const image = el("img", "sv-page-img");
       image.src = url;
       image.alt = `หน้า ${index + 1}`;
       image.loading = "lazy";
-      figure.append(image);
+
+      const zoomHint = el("button", "sv-page-zoom-hint");
+      zoomHint.type = "button";
+      zoomHint.innerHTML = `<span>🔍</span> แตะเพื่อซูม`;
+
+      figure.append(image, zoomHint);
+      figure.addEventListener("click", () => {
+        const root = container.closest(".phone") || document.body;
+        openSecureZoomModal(pageMedia, index, root);
+      });
       pages.append(figure);
     });
 
@@ -269,78 +283,8 @@ export function mountSensitiveFlow(container, { ticketId, onStateChange }) {
   }
 
   function openLightbox(mediaArray, startIndex = 0) {
-    const overlay = el("div", "sv-lightbox");
-    
-    // หัวแกลเลอรีต้องมีของ 3 อย่างเหมือนกันทั้งสามหน้า: ชื่อภาพ · ลำดับ n/m · ปุ่มปิด
-    // เดิม app มีแต่ n/m ไม่มีชื่อภาพ (ชื่ออยู่ใต้ภาพแทน) ผู้ใช้เลยอ่านคนละที่กับอีกสองหน้า
-    const header = el("div", "sv-lightbox-header");
-    const heading = el("div", "sv-lightbox__heading");
-    const label = el("strong", "sv-lightbox__title", mediaArray[startIndex]?.label || T.gallery.untitled);
-    const counter = el("span", "sv-lightbox__counter", T.gallery.counter(startIndex, mediaArray.length));
-    heading.append(label, counter);
-    const close = el("button", "sv-lightbox__close", "×");
-    close.type = "button";
-    close.setAttribute("aria-label", T.gallery.close);
-    header.append(heading, close);
-
-    const track = el("div", "sv-lightbox-track");
-
-    // ปุ่มลูกศรมีไว้ให้กดบนจอใหญ่ ส่วนบนมือถือยังปัดได้ตามปกติ (scroll-snap)
-    const prevBtn = el("button", "sv-lightbox-nav prev", "‹");
-    const nextBtn = el("button", "sv-lightbox-nav next", "›");
-    prevBtn.type = "button";
-    nextBtn.type = "button";
-    prevBtn.setAttribute("aria-label", T.gallery.previous);
-    nextBtn.setAttribute("aria-label", T.gallery.next);
-
-    prevBtn.addEventListener("click", () => {
-      track.scrollBy({ left: -track.clientWidth, behavior: 'smooth' });
-    });
-    nextBtn.addEventListener("click", () => {
-      track.scrollBy({ left: track.clientWidth, behavior: 'smooth' });
-    });
-
-    mediaArray.forEach((item) => {
-      const slide = el("div", "sv-lightbox-slide");
-      const image = el("img", null);
-      image.src = item.url;
-      image.alt = item.label || T.gallery.untitled;
-      image.draggable = false;
-      slide.append(image);
-      track.append(slide);
-    });
-
-    overlay.append(header, prevBtn, nextBtn, track);
-
-    const dismiss = () => overlay.remove();
-    close.addEventListener("click", dismiss);
-    
-    // Update counter on scroll
-    track.addEventListener("scroll", () => {
-      const slideWidth = track.clientWidth;
-      if (slideWidth > 0) {
-        const currentIndex = Math.round(track.scrollLeft / slideWidth);
-        counter.textContent = T.gallery.counter(currentIndex, mediaArray.length);
-        label.textContent = mediaArray[currentIndex]?.label || T.gallery.untitled;
-
-        // Hide/Show buttons
-        prevBtn.style.display = currentIndex === 0 ? "none" : "flex";
-        nextBtn.style.display = currentIndex === mediaArray.length - 1 ? "none" : "flex";
-      }
-    });
-
-    const root = container.closest('.phone') || document.body;
-    root.append(overlay);
-    
-    // Initial button state
-    prevBtn.style.display = startIndex === 0 ? "none" : "flex";
-    nextBtn.style.display = startIndex === mediaArray.length - 1 ? "none" : "flex";
-
-    if (startIndex > 0) {
-      setTimeout(() => {
-        track.scrollLeft = startIndex * track.clientWidth;
-      }, 0);
-    }
+    const root = container.closest(".phone") || document.body;
+    openSecureZoomModal(mediaArray, startIndex, root);
   }
 
   renderLocked();
@@ -379,4 +323,339 @@ export function attachDescriptionUnlock(afterNode, onUnlock) {
   row.append(hint, button);
   afterNode.insertAdjacentElement("afterend", row);
   return row;
+}
+
+/**
+ * ฟังก์ชันเปิดดูภาพ/เอกสารแบบซูมขยายและป้องกันการบันทึกภาพ (Zoom & Anti-Download Viewer)
+ * ใช้งานร่วมกันทั้ง App, LIFF, และ Web
+ */
+export function openSecureZoomModal(mediaArray, startIndex = 0, rootNode = document.body) {
+  if (!mediaArray || mediaArray.length === 0) return;
+
+  let currentIndex = Math.max(0, Math.min(startIndex, mediaArray.length - 1));
+  let scale = 1.0;
+  let posX = 0;
+  let posY = 0;
+
+  const MIN_SCALE = 1.0;
+  const MAX_SCALE = 4.0;
+  const STEP_SCALE = 0.5;
+
+  const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+
+  const overlay = el("div", "sv-lightbox");
+  overlay.oncontextmenu = (e) => e.preventDefault();
+
+  // Header
+  const header = el("div", "sv-lightbox-header");
+  const heading = el("div", "sv-lightbox__heading");
+  const titleEl = el(
+    "strong",
+    "sv-lightbox__title",
+    mediaArray[currentIndex]?.label || T.gallery.untitled
+  );
+  const counterEl = el(
+    "span",
+    "sv-lightbox__counter",
+    T.gallery.counter(currentIndex, mediaArray.length)
+  );
+  heading.append(titleEl, counterEl);
+
+  const closeBtn = el("button", "sv-lightbox__close", "×");
+  closeBtn.type = "button";
+  closeBtn.setAttribute("aria-label", T.gallery.close);
+  closeBtn.addEventListener("click", () => {
+    overlay.remove();
+    document.body.style.overflow = "";
+  });
+  header.append(heading, closeBtn);
+
+  // Viewport
+  const viewport = el("div", "sv-zoom-viewport");
+
+  // Nav buttons
+  const prevBtn = el("button", "sv-lightbox-nav prev", "‹");
+  const nextBtn = el("button", "sv-lightbox-nav next", "›");
+  prevBtn.type = "button";
+  nextBtn.type = "button";
+  prevBtn.setAttribute("aria-label", T.gallery.previous);
+  nextBtn.setAttribute("aria-label", T.gallery.next);
+
+  // Zoom Container & Image
+  const zoomContainer = el("div", "sv-zoom-container");
+  const imgEl = el("img", "sv-zoom-image");
+  imgEl.draggable = false;
+  imgEl.oncontextmenu = (e) => e.preventDefault();
+  zoomContainer.append(imgEl);
+
+  // Transparent Shield Layer
+  const shield = el("div", "sv-zoom-shield");
+  shield.oncontextmenu = (e) => e.preventDefault();
+
+  viewport.append(prevBtn, nextBtn, zoomContainer, shield);
+
+  // Floating Zoom Controls Bar
+  const controls = el("div", "sv-zoom-controls");
+  const zoomOutBtn = el("button", "sv-zoom-btn", "−");
+  zoomOutBtn.type = "button";
+  zoomOutBtn.setAttribute("aria-label", "ซูมออก");
+
+  const badgeBtn = el("button", "sv-zoom-badge", "100%");
+  badgeBtn.type = "button";
+  badgeBtn.title = "แตะเพื่อรีเซ็ต 100%";
+
+  const zoomInBtn = el("button", "sv-zoom-btn", "+");
+  zoomInBtn.type = "button";
+  zoomInBtn.setAttribute("aria-label", "ซูมเข้า");
+
+  const resetBtn = el("button", "sv-zoom-reset", "รีเซ็ต");
+  resetBtn.type = "button";
+  resetBtn.style.display = "none";
+
+  controls.append(zoomOutBtn, badgeBtn, zoomInBtn, resetBtn);
+
+  // Security Notice Footer
+  const notice = el("div", "sv-zoom-notice");
+  const noticeText = el("span", null, "🔒 โหมดความปลอดภัย: ป้องกันการดาวน์โหลดและบันทึกภาพ");
+  const noticeHint = el("small", null, "แตะ 2 ครั้ง หรือกางสองนิ้วเพื่อซูม");
+  notice.append(noticeText, noticeHint);
+
+  overlay.append(header, viewport, controls, notice);
+
+  function updateTransform(withTransition = false) {
+    zoomContainer.style.transition = withTransition
+      ? "transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)"
+      : "none";
+    zoomContainer.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+    badgeBtn.textContent = `${Math.round(scale * 100)}%`;
+    resetBtn.style.display = scale > 1.1 ? "inline-block" : "none";
+    zoomOutBtn.disabled = scale <= MIN_SCALE;
+    zoomInBtn.disabled = scale >= MAX_SCALE;
+
+    if (mediaArray.length > 1) {
+      prevBtn.style.display = scale <= 1.1 && currentIndex > 0 ? "flex" : "none";
+      nextBtn.style.display =
+        scale <= 1.1 && currentIndex < mediaArray.length - 1 ? "flex" : "none";
+    } else {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+  }
+
+  function resetZoom() {
+    scale = 1.0;
+    posX = 0;
+    posY = 0;
+    updateTransform(true);
+  }
+
+  function setSlide(idx) {
+    currentIndex = idx;
+    const item = mediaArray[currentIndex];
+    imgEl.src = item.url;
+    imgEl.alt = item.label || T.gallery.untitled;
+    titleEl.textContent = item.label || T.gallery.untitled;
+    counterEl.textContent = T.gallery.counter(currentIndex, mediaArray.length);
+    resetZoom();
+  }
+
+  // Zoom button handlers
+  zoomInBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    scale = clamp(scale + STEP_SCALE, MIN_SCALE, MAX_SCALE);
+    updateTransform(true);
+  });
+
+  zoomOutBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    scale = clamp(scale - STEP_SCALE, MIN_SCALE, MAX_SCALE);
+    if (scale <= 1.05) {
+      posX = 0;
+      posY = 0;
+    }
+    updateTransform(true);
+  });
+
+  badgeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetZoom();
+  });
+
+  resetBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetZoom();
+  });
+
+  prevBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (currentIndex > 0) setSlide(currentIndex - 1);
+  });
+
+  nextBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (currentIndex < mediaArray.length - 1) setSlide(currentIndex + 1);
+  });
+
+  // Touch gesture handling
+  let touchStartDist = 0;
+  let touchStartScale = 1;
+  let isPinching = false;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragStartTx = 0;
+  let dragStartTy = 0;
+  let lastTapTime = 0;
+
+  const getDistance = (t1, t2) =>
+    Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+
+  viewport.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length === 2) {
+        isPinching = true;
+        isDragging = false;
+        touchStartDist = getDistance(e.touches[0], e.touches[1]);
+        touchStartScale = scale;
+      } else if (e.touches.length === 1) {
+        isPinching = false;
+        if (scale > 1.05) {
+          isDragging = true;
+          dragStartX = e.touches[0].clientX;
+          dragStartY = e.touches[0].clientY;
+          dragStartTx = posX;
+          dragStartTy = posY;
+        }
+      }
+    },
+    { passive: true }
+  );
+
+  viewport.addEventListener(
+    "touchmove",
+    (e) => {
+      if (isPinching && e.touches.length === 2) {
+        e.preventDefault();
+        const dist = getDistance(e.touches[0], e.touches[1]);
+        const ratio = dist / (touchStartDist || 1);
+        scale = clamp(touchStartScale * ratio, MIN_SCALE, MAX_SCALE);
+        updateTransform(false);
+      } else if (isDragging && e.touches.length === 1) {
+        e.preventDefault();
+        const dx = e.touches[0].clientX - dragStartX;
+        const dy = e.touches[0].clientY - dragStartY;
+        const rect = viewport.getBoundingClientRect();
+        const maxTx = ((scale - 1) * rect.width) / 2;
+        const maxTy = ((scale - 1) * rect.height) / 2;
+        posX = clamp(dragStartTx + dx, -maxTx, maxTx);
+        posY = clamp(dragStartTy + dy, -maxTy, maxTy);
+        updateTransform(false);
+      }
+    },
+    { passive: false }
+  );
+
+  viewport.addEventListener(
+    "touchend",
+    (e) => {
+      if (e.touches.length < 2) isPinching = false;
+      if (e.touches.length === 0) {
+        isDragging = false;
+        if (scale < 1.05) resetZoom();
+      }
+    },
+    { passive: true }
+  );
+
+  viewport.addEventListener("click", (e) => {
+    if (
+      e.target === prevBtn ||
+      e.target === nextBtn ||
+      e.target.closest(".sv-zoom-controls")
+    )
+      return;
+    const now = Date.now();
+    if (now - lastTapTime < 320) {
+      if (scale > 1.2) {
+        resetZoom();
+      } else {
+        scale = 2.5;
+        posX = 0;
+        posY = 0;
+        updateTransform(true);
+      }
+      lastTapTime = 0;
+    } else {
+      lastTapTime = now;
+    }
+  });
+
+  // Wheel zoom (Desktop / Web)
+  viewport.addEventListener(
+    "wheel",
+    (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.25 : -0.25;
+      scale = clamp(scale + delta, MIN_SCALE, MAX_SCALE);
+      if (scale <= 1.05) {
+        posX = 0;
+        posY = 0;
+      }
+      updateTransform(true);
+    },
+    { passive: false }
+  );
+
+  // Mouse drag pan (Desktop / Web)
+  let isMouseDown = false;
+  let mouseStartX = 0;
+  let mouseStartY = 0;
+  let mouseStartTx = 0;
+  let mouseStartTy = 0;
+
+  viewport.addEventListener("mousedown", (e) => {
+    if (scale > 1.05) {
+      isMouseDown = true;
+      mouseStartX = e.clientX;
+      mouseStartY = e.clientY;
+      mouseStartTx = posX;
+      mouseStartTy = posY;
+    }
+  });
+
+  window.addEventListener("mousemove", (e) => {
+    if (isMouseDown && scale > 1.05) {
+      const dx = e.clientX - mouseStartX;
+      const dy = e.clientY - mouseStartY;
+      const rect = viewport.getBoundingClientRect();
+      const maxTx = ((scale - 1) * rect.width) / 2;
+      const maxTy = ((scale - 1) * rect.height) / 2;
+      posX = clamp(mouseStartTx + dx, -maxTx, maxTx);
+      posY = clamp(mouseStartTy + dy, -maxTy, maxTy);
+      updateTransform(false);
+    }
+  });
+
+  window.addEventListener("mouseup", () => {
+    isMouseDown = false;
+  });
+
+  // Keyboard navigation
+  const keyHandler = (e) => {
+    if (e.key === "Escape") {
+      overlay.remove();
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", keyHandler);
+    } else if (e.key === "ArrowLeft" && currentIndex > 0) {
+      setSlide(currentIndex - 1);
+    } else if (e.key === "ArrowRight" && currentIndex < mediaArray.length - 1) {
+      setSlide(currentIndex + 1);
+    }
+  };
+  window.addEventListener("keydown", keyHandler);
+
+  setSlide(currentIndex);
+  document.body.style.overflow = "hidden";
+  rootNode.append(overlay);
 }
